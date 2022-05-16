@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.example.andro2client.Retrofit.MyService
 import com.example.andro2client.Retrofit.RetrofitClient
 import com.example.andro2client.ui.theme.Andro2ClientTheme
+import com.example.andro2client.ui.theme.MainScreen
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -61,7 +62,9 @@ class MainActivity : ComponentActivity() {
             Andro2ClientTheme {
                 Surface(color = MaterialTheme.colors.background) {
                     LoginView()
-                }
+               }
+
+
             }
         }
 
@@ -94,7 +97,9 @@ fun LoginView(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth().testTag("user"),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("user"),
             value = usernameSate.value,
             onValueChange = {
                 usernameSate.value = it
@@ -113,7 +118,10 @@ fun LoginView(modifier: Modifier = Modifier) {
         )
 
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth().focusRequester(focusRequester).testTag("password"),
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(focusRequester)
+                .testTag("password"),
             value = passwordSate.value,
             onValueChange = { passwordSate.value = it },
             label = { Text("Password") },
@@ -161,6 +169,7 @@ fun LoginView(modifier: Modifier = Modifier) {
             }) {
             Text("don't have an account?")
         }
+
     }
 }
 
@@ -185,6 +194,8 @@ fun loginUser(userName: String, password: String, context: Context) {
             Toast.makeText(context, ""+result, Toast.LENGTH_SHORT).show()
         }
     )
+
+    context.startActivity(Intent(context, HomeActivity::class.java))
 }
 
 @Preview(showBackground = true)
