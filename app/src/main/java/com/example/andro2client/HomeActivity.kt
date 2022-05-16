@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.example.andro2client.model.Recipe
 import com.example.andro2client.ui.theme.Andro2ClientTheme
 import com.example.andro2client.ui.theme.MainScreen
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -33,24 +34,26 @@ class HomeActivity: ComponentActivity() {
 
         setContent {
             Andro2ClientTheme {
-                compositeDisposable.add(myService.getRecipe()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { result ->
-                        val mapper = jacksonObjectMapper()
-                        val genres: List<Recipe> = mapper.readValue(result)
-
-                    }
-                )
+                RecipeList()
                 MainScreen()
                 HomeScreenView()
             }
         }
     }
+}
 
-    @Composable
-    @ExperimentalFoundationApi
-    private fun recipeList(result: String?) {
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+    private fun RecipeList(modifier: Modifier = Modifier) {
+
+    compositeDisposable.add(myService.getRecipe()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { result ->
+            result
+        }
+    )
+
         LazyColumn {
             // Add a single item
             item {
@@ -82,23 +85,8 @@ class HomeActivity: ComponentActivity() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Button(
-                modifier = Modifier.padding(top = 16.dp),
-                onClick = {
-                    getRecipe()
-                }) {
-                Text("get recipes")
-            }
+
         }
     }
 
-    fun getRecipe() {
-        compositeDisposable.add(myService.getRecipe()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { result ->
-                print(result)
-            }
-        )
-    }
-}
+
