@@ -1,5 +1,6 @@
 package com.example.andro2client
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,15 +8,15 @@ import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.andro2client.ui.theme.Andro2ClientTheme
 import com.example.andro2client.ui.theme.MainScreen
@@ -40,20 +41,40 @@ class HomeActivity: ComponentActivity() {
 
     fun viewHome(){
         setContent {
+            val context = LocalContext.current
             Andro2ClientTheme {
+
 
                 MainScreen()
                 HomeScreenView()
                 LazyColumn {
 
                         items(listdata.size) {
-                            Text(
-                                text = listdata.get(it).level + " | " + listdata.get(it).time,
-                                modifier = Modifier.padding(8.dp)
+                            Card(
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .fillMaxWidth()
+                                    .wrapContentHeight(),
+                                shape = MaterialTheme.shapes.medium,
+                                elevation = 5.dp,
+                                backgroundColor = MaterialTheme.colors.background
                             )
+                            {
+                                Row(
 
+                                    Modifier.clickable {
+                                        val intent = Intent(this@HomeActivity,RecipeActivity::class.java)
+                                        intent.putExtra("RECIPE_ID", listdata.get(it))
+                                        startActivity(intent)
+                                        }
+                                ) {
+                                    Text(
+                                        text = listdata.get(it).level + " | " + listdata.get(it).time,
+                                        modifier = Modifier.padding(8.dp)
+                                    )
+                                }
+                            }
                         }
-                    
                 }
             }
         }
@@ -71,9 +92,7 @@ class HomeActivity: ComponentActivity() {
 
                     for (i in 0 until answer.length()) {
                         var json_objectdetail: JSONObject =answer.getJSONObject(i)
-                        var model:Recipe= Recipe();
-                        model.time=json_objectdetail.getString("time")
-                        model.level=json_objectdetail.getString("level")
+                        var model:Recipe= Recipe(json_objectdetail.getString("time"), json_objectdetail.getString("level"));
                         listdata.add(model)
                     }
                 viewHome()
@@ -97,5 +116,8 @@ class HomeActivity: ComponentActivity() {
 
         }
     }
+
+
+
 
 
