@@ -46,36 +46,8 @@ class HomeActivity: ComponentActivity() {
 
 
                 MainScreen()
-                HomeScreenView()
-                LazyColumn {
+               // HomeScreenView()
 
-                        items(listdata.size) {
-                            Card(
-                                modifier = Modifier
-                                    .padding(10.dp)
-                                    .fillMaxWidth()
-                                    .wrapContentHeight(),
-                                shape = MaterialTheme.shapes.medium,
-                                elevation = 5.dp,
-                                backgroundColor = MaterialTheme.colors.background
-                            )
-                            {
-                                Row(
-
-                                    Modifier.clickable {
-                                        val intent = Intent(this@HomeActivity,RecipeActivity::class.java)
-                                        intent.putExtra("RECIPE_ID", listdata.get(it))
-                                        startActivity(intent)
-                                        }
-                                ) {
-                                    Text(
-                                        text = listdata.get(it).level + " | " + listdata.get(it).time,
-                                        modifier = Modifier.padding(8.dp)
-                                    )
-                                }
-                            }
-                        }
-                }
             }
         }
     }
@@ -104,20 +76,57 @@ class HomeActivity: ComponentActivity() {
     @OptIn(ExperimentalComposeUiApi::class)
     @Composable
     fun HomeScreenView(modifier: Modifier = Modifier) {
+     //   RecipeList()
+//        Column(
+//            modifier
+//                .fillMaxWidth()
+//                .padding(16.dp),
+//            verticalArrangement = Arrangement.spacedBy(8.dp),
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ) {
+//
+//
+//        }
+        bla()
 
-        Column(
-            modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+    }
 
+@Composable
 
+fun bla() {
+    val context = LocalContext.current
+
+    LazyColumn {
+
+        items(listdata.size) {
+            Card(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                shape = MaterialTheme.shapes.medium,
+                elevation = 5.dp,
+                backgroundColor = MaterialTheme.colors.background
+            )
+            {
+                Row(
+
+                    Modifier.clickable {
+                        val intent = Intent(context, RecipeActivity::class.java)
+                        intent.putExtra("RECIPE_ID", listdata.get(it))
+                        context.startActivity(intent)
+                    }
+                ) {
+                    Text(
+                        text = listdata.get(it).level + " | " + listdata.get(it).time,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
+            }
         }
     }
 
-
+}
 
 
 
