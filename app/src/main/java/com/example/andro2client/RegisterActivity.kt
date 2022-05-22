@@ -178,8 +178,10 @@ fun register(email: String, name:String, password: String, context: Context) {
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->
             Toast.makeText(context, ""+result, Toast.LENGTH_SHORT).show()
+
+            if(result=="\"Registartion success\""){
+                context.startActivity(Intent(context, HomeActivity::class.java))
+            }
         }
     )
-
-    context.startActivity(Intent(context, RegisterActivity::class.java))
 }

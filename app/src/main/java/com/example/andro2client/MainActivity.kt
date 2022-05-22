@@ -192,10 +192,14 @@ fun loginUser(userName: String, password: String, context: Context) {
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->
             Toast.makeText(context, ""+result, Toast.LENGTH_SHORT).show()
+
+            if(result=="\"Login success\""){
+                context.startActivity(Intent(context, HomeActivity::class.java))
+            }
         }
     )
 
-    context.startActivity(Intent(context, HomeActivity::class.java))
+
 }
 
 @Preview(showBackground = true)
