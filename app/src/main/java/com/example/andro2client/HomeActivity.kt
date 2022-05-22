@@ -43,11 +43,7 @@ class HomeActivity: ComponentActivity() {
         setContent {
             val context = LocalContext.current
             Andro2ClientTheme {
-
-
                 MainScreen()
-               // HomeScreenView()
-
             }
         }
     }
@@ -76,19 +72,7 @@ class HomeActivity: ComponentActivity() {
     @OptIn(ExperimentalComposeUiApi::class)
     @Composable
     fun HomeScreenView(modifier: Modifier = Modifier) {
-     //   RecipeList()
-//        Column(
-//            modifier
-//                .fillMaxWidth()
-//                .padding(16.dp),
-//            verticalArrangement = Arrangement.spacedBy(8.dp),
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//
-//
-//        }
         bla()
-
     }
 
 @Composable
