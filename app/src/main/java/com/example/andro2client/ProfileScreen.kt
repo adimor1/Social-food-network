@@ -23,8 +23,8 @@ import org.json.JSONArray
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ProfileView(modifier: Modifier = Modifier) {
-    val dddd = ProfileDetails()
-    ProfileView(dddd)
+    val userstate = ProfileDetails()
+    ProfileView(userstate)
 }
 
 @Composable
@@ -62,6 +62,9 @@ fun ProfileView(user: User?){
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
+            Text(
+                text = user.name
+            )
             Text(
                 text = user.email
             )

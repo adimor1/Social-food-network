@@ -38,24 +38,27 @@ class HomeActivity: ComponentActivity() {
     @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       // RecipeList()
-        viewHome()
-    }
-
-    fun viewHome(){
         setContent {
-            val context = LocalContext.current
             Andro2ClientTheme {
                 MainScreen()
+
             }
         }
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun HomeScreenView(modifier: Modifier = Modifier) {
+
+    val listdatastate= RecipeList()
+    bla(listdatastate)
+}
+
 @Composable
 private fun RecipeList(): ArrayList<Recipe>? {
     val listdata = ArrayList<Recipe>()
-    val gggg = remember {
+    val listdatastate = remember {
         mutableStateOf<ArrayList<Recipe>?>(null)
     }
 
@@ -71,26 +74,19 @@ private fun RecipeList(): ArrayList<Recipe>? {
                 var model:Recipe= Recipe(json_objectdetail.getString("time"), json_objectdetail.getString("level"));
                 listdata.add(model)
             }
-            gggg.value = listdata
+            listdatastate.value = listdata
         }
     )
-    return gggg.value
+    return listdatastate.value
 }
 
-    @OptIn(ExperimentalComposeUiApi::class)
-    @Composable
-    fun HomeScreenView(modifier: Modifier = Modifier) {
-
-        val hhhh= RecipeList()
-        bla(hhhh)
-    }
-
 @Composable
-
 fun bla(listdata: ArrayList<Recipe>?){
     val context = LocalContext.current
 
+
 if(listdata!=null){
+    
     LazyColumn {
 
         items(listdata.size) {
@@ -121,8 +117,6 @@ if(listdata!=null){
         }
     }
 }
-
-
 }
 
 
