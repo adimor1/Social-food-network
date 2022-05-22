@@ -6,50 +6,66 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.andro2client.model.LoginUser
+import com.example.andro2client.model.Recipe
 import com.example.andro2client.model.User
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.json.JSONObject
-
+import org.json.JSONArray
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ProfileView(modifier: Modifier = Modifier) {
-
-    ProfileDetails()
-    profileView()
+    val dddd = ProfileDetails()
+    ProfileView(dddd)
 }
 
-private fun ProfileDetails() {
+@Composable
+private fun ProfileDetails() :User?{
+    val user = remember {
+        mutableStateOf<User?>(null)
+    }
+
     compositeDisposable.add(myService.getUserDetails(LoginUser.loginEmail)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->
 
-            val answer = JSONObject(result)
+            val answer = JSONArray(result)
+            var objectAnswer: JSONObject =answer.getJSONObject(0)
 
-            var model: User = User(answer.getString("email"), answer.getString("name"));
-           // profileView()
+
+            user.value= User(objectAnswer.getString("email"), objectAnswer.getString("name"));
+
         }
+
     )
+    return user.value
 }
 
 @Composable
-fun profileView(modifier: Modifier = Modifier){
-    Column(
-        modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "My Profile"
-        )
+fun ProfileView(user: User?){
+
+    if(user!=null){
+        Column(
+            modifier= Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Text(
+                text = user.email
+            )
+        }
     }
+
 }

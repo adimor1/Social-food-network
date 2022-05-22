@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -28,15 +30,16 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import org.json.JSONArray
 import org.json.JSONObject
 import com.example.andro2client.model.Recipe
+import com.example.andro2client.model.User
 
-val listdata = ArrayList<Recipe>()
 
 class HomeActivity: ComponentActivity() {
 
     @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        RecipeList()
+       // RecipeList()
+        viewHome()
     }
 
     fun viewHome(){
@@ -47,39 +50,47 @@ class HomeActivity: ComponentActivity() {
             }
         }
     }
+}
 
-
-    private fun RecipeList() {
-
-        compositeDisposable.add(myService.getRecipe()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { result ->
-
-                val answer = JSONArray(result)
-
-                    for (i in 0 until answer.length()) {
-                        var json_objectdetail: JSONObject =answer.getJSONObject(i)
-                        var model:Recipe= Recipe(json_objectdetail.getString("time"), json_objectdetail.getString("level"));
-                        listdata.add(model)
-                    }
-                viewHome()
-            }
-        )
+@Composable
+private fun RecipeList(): ArrayList<Recipe>? {
+    val listdata = ArrayList<Recipe>()
+    val gggg = remember {
+        mutableStateOf<ArrayList<Recipe>?>(null)
     }
+
+    compositeDisposable.add(myService.getRecipe()
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { result ->
+
+            val answer = JSONArray(result)
+
+            for (i in 0 until answer.length()) {
+                var json_objectdetail: JSONObject =answer.getJSONObject(i)
+                var model:Recipe= Recipe(json_objectdetail.getString("time"), json_objectdetail.getString("level"));
+                listdata.add(model)
+            }
+            gggg.value = listdata
+        }
+    )
+    return gggg.value
 }
 
     @OptIn(ExperimentalComposeUiApi::class)
     @Composable
     fun HomeScreenView(modifier: Modifier = Modifier) {
-        bla()
+
+        val hhhh= RecipeList()
+        bla(hhhh)
     }
 
 @Composable
 
-fun bla() {
+fun bla(listdata: ArrayList<Recipe>?){
     val context = LocalContext.current
 
+if(listdata!=null){
     LazyColumn {
 
         items(listdata.size) {
@@ -109,6 +120,8 @@ fun bla() {
             }
         }
     }
+}
+
 
 }
 
