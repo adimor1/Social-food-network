@@ -22,7 +22,8 @@ interface MyService {
     @POST ("addRecipe")
     @FormUrlEncoded
     fun addRecipe(@Field("level") level:String,
-                  @Field("time") time:String): Observable<String>
+                  @Field("time") time:String,
+                  @Field("creatorEmail") creatorEmail:String): Observable<String>
 
 
     @GET ("getRecipe")

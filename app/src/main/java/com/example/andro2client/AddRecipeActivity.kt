@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.andro2client.model.LoginUser
 import com.example.andro2client.ui.theme.Andro2ClientTheme
 import com.example.andro2client.ui.theme.MainScreen
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -128,7 +129,7 @@ fun addRecipe(level: String, time:String, context: Context) {
         return;
     }
 
-    compositeDisposable.add(myService.addRecipe(level, time)
+    compositeDisposable.add(myService.addRecipe(level, time, LoginUser.loginEmail)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->

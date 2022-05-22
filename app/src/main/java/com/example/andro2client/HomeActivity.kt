@@ -71,7 +71,10 @@ private fun RecipeList(): ArrayList<Recipe>? {
 
             for (i in 0 until answer.length()) {
                 var json_objectdetail: JSONObject =answer.getJSONObject(i)
-                var model:Recipe= Recipe(json_objectdetail.getString("time"), json_objectdetail.getString("level"));
+                var model:Recipe= Recipe(json_objectdetail.getString("time"),
+                    json_objectdetail.getString("level"),
+                    json_objectdetail.getString("creatorEmail"),
+                );
                 listdata.add(model)
             }
             listdatastate.value = listdata
