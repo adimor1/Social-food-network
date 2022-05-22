@@ -27,4 +27,7 @@ interface MyService {
 
     @GET ("getRecipe")
     fun getRecipe():Observable<String>
+
+    @GET ("getUserDetails")
+    fun getUserDetails(@Field("email") email:String):Observable<String>
 }

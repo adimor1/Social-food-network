@@ -2,7 +2,7 @@ package com.example.andro2client.model
 
 
 object LoginUser {
-    var loginEmail: String? = null
+    var loginEmail: String = ""
         get() {
             return field
         }
