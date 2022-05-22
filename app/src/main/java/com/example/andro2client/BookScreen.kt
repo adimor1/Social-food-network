@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.andro2client.model.LoginUser
 import com.example.andro2client.ui.theme.Andro2ClientTheme
 import com.example.andro2client.ui.theme.MainScreen
 import com.fasterxml.jackson.core.type.TypeReference
@@ -34,36 +35,23 @@ import com.example.andro2client.model.Recipe
 import com.example.andro2client.model.User
 
 
-class HomeActivity: ComponentActivity() {
-
-    @ExperimentalFoundationApi
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            Andro2ClientTheme {
-                MainScreen()
-
-            }
-        }
-    }
-}
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun HomeScreenView(modifier: Modifier = Modifier) {
+fun BookScreenView(modifier: Modifier = Modifier) {
 
-    val listdatastate= RecipeList()
-    bla(listdatastate)
+    val listdatastate= MyRecipeList()
+    bookView(listdatastate)
 }
 
 @Composable
-private fun RecipeList(): ArrayList<Recipe>? {
-    val mylistdata = ArrayList<Recipe>()
-    val mylistdatastate = remember {
+private fun MyRecipeList(): ArrayList<Recipe>? {
+    val listdata = ArrayList<Recipe>()
+    val listdatastate = remember {
         mutableStateOf<ArrayList<Recipe>?>(null)
     }
 
-    compositeDisposable.add(myService.getRecipe()
+    compositeDisposable.add(myService.getMyRecipe(LoginUser.loginEmail)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->
@@ -71,58 +59,57 @@ private fun RecipeList(): ArrayList<Recipe>? {
             val answer = JSONArray(result)
 
             for (i in 0 until answer.length()) {
-                val json_objectdetail: JSONObject =answer.getJSONObject(i)
-                val model:Recipe= Recipe(json_objectdetail.getString("time"),
+                var json_objectdetail: JSONObject =answer.getJSONObject(i)
+                var model:Recipe= Recipe(json_objectdetail.getString("time"),
                     json_objectdetail.getString("level"),
                     json_objectdetail.getString("creatorEmail"),
                 );
-                mylistdata.add(model)
+                listdata.add(model)
             }
-            mylistdatastate.value = mylistdata
+            listdatastate.value = listdata
         }
     )
-    return mylistdatastate.value
+    return listdatastate.value
 }
 
 @Composable
-fun bla(mylistdata: ArrayList<Recipe>?){
+fun bookView(listdata: ArrayList<Recipe>?){
     val context = LocalContext.current
 
 
-if(mylistdata!=null){
-    
-    LazyColumn {
+    if(listdata!=null){
 
-        items(mylistdata.size) {
-            Card(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                shape = MaterialTheme.shapes.medium,
-                elevation = 5.dp,
-                backgroundColor = MaterialTheme.colors.background
-            )
-            {
-                Row(
+        LazyColumn {
 
-                    Modifier.clickable {
-                        val intent = Intent(context, RecipeActivity::class.java)
-                        intent.putExtra("RECIPE_ID", mylistdata.get(it))
-                        context.startActivity(intent)
+            items(listdata.size) {
+                Card(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    shape = MaterialTheme.shapes.medium,
+                    elevation = 5.dp,
+                    backgroundColor = MaterialTheme.colors.background
+                )
+                {
+                    Row(
+
+                        Modifier.clickable {
+                            val intent = Intent(context, RecipeActivity::class.java)
+                            intent.putExtra("RECIPE_ID", listdata.get(it))
+                            context.startActivity(intent)
+                        }
+                    ) {
+                        Text(
+                            text = listdata.get(it).level + " | " + listdata.get(it).time,
+                            modifier = Modifier.padding(8.dp)
+
+                        )
                     }
-                ) {
-                    Text(
-                        text = mylistdata.get(it).level + " | " + mylistdata.get(it).time,
-                        modifier = Modifier.padding(8.dp)
-
-                    )
-
                 }
             }
         }
     }
-}
 }
 
 

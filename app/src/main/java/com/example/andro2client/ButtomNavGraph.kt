@@ -21,6 +21,9 @@ fun BottomNavGraph(navController: NavHostController) {
         composable(route = BottomBarScreen.Profile.route) {
             ProfileView()
         }
+        composable(route = BottomBarScreen.Book.route) {
+            BookScreenView()
+        }
     }
 
 }

@@ -32,4 +32,8 @@ interface MyService {
     @POST ("getUserDetails")
     @FormUrlEncoded
     fun getUserDetails(@Field("email") email:String):Observable<String>
+
+    @POST ("getMyRecipe")
+    @FormUrlEncoded
+    fun getMyRecipe(@Field("creatorEmail") creatorEmail:String):Observable<String>
 }
