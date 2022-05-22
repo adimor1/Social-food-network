@@ -39,6 +39,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.andro2client.Retrofit.MyService
 import com.example.andro2client.Retrofit.RetrofitClient
+import com.example.andro2client.model.LoginUser
 import com.example.andro2client.ui.theme.Andro2ClientTheme
 import com.example.andro2client.ui.theme.MainScreen
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -195,11 +196,10 @@ fun loginUser(userName: String, password: String, context: Context) {
 
             if(result=="\"Login success\""){
                 context.startActivity(Intent(context, HomeActivity::class.java))
+                LoginUser.loginEmail = userName
             }
         }
     )
-
-
 }
 
 @Preview(showBackground = true)

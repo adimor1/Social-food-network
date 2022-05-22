@@ -33,6 +33,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.example.andro2client.model.LoginUser
 import com.example.andro2client.ui.theme.Andro2ClientTheme
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -181,6 +182,8 @@ fun register(email: String, name:String, password: String, context: Context) {
 
             if(result=="\"Registartion success\""){
                 context.startActivity(Intent(context, HomeActivity::class.java))
+                LoginUser.loginEmail = email
+
             }
         }
     )
