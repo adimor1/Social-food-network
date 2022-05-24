@@ -2,10 +2,11 @@ package com.example.andro2client.Retrofit
 
 import android.telecom.Call
 import io.reactivex.Observable
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.*
+import retrofit2.http.HTTP
+
+
+
 
 interface MyService {
     @POST ("register")
@@ -36,4 +37,8 @@ interface MyService {
     @POST ("getMyRecipe")
     @FormUrlEncoded
     fun getMyRecipe(@Field("creatorEmail") creatorEmail:String):Observable<String>
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "deleteRecipe", hasBody = true)
+    fun deleteRecipe(@Field("level") level: String):Observable<String>
 }
