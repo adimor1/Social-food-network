@@ -2,22 +2,26 @@ package com.example.andro2client
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.TextUtils
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -28,13 +32,28 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import com.example.andro2client.model.LoginUser
 import com.example.andro2client.ui.theme.Andro2ClientTheme
 import com.example.andro2client.ui.theme.MainScreen
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.util.jar.Manifest
+import androidx.compose.material.Text
+import androidx.activity.result.contract.ActivityResultContracts.GetContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import com.example.andro2client.ui.theme.Purple500
+import dev.chrisbanes.accompanist.glide.GlideImage
 
 class AddRecipeActivity : ComponentActivity() {
+
+    private var imageUriState = mutableStateOf<Uri?>(null)
+
     @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,10 +62,12 @@ class AddRecipeActivity : ComponentActivity() {
                 Surface(color = MaterialTheme.colors.background) {
                     AddRecipeView()
                     MainScreen()
+
                 }
             }
         }
     }
+
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -68,7 +89,9 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth().testTag("level"),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("level"),
             value = levelSate.value,
             onValueChange = {
                 levelSate.value = it
@@ -86,7 +109,9 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
             )
         )
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth().testTag("time"),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("time"),
             value = timeSate.value,
             onValueChange = {
                 timeSate.value = it
@@ -112,6 +137,9 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
             }) {
             Text("Add recipe")
         }
+        ImagePicker()
+
+
     }
 }
 
@@ -138,5 +166,59 @@ fun addRecipe(level: String, time:String, context: Context) {
     )
 
     context.startActivity(Intent(context, AddRecipeActivity::class.java))
+}
+
+
+@Composable
+fun ImagePicker() {
+    var imageUrl by remember { mutableStateOf<Uri?>(null) }
+    val context = LocalContext.current
+    val bitmap = remember { mutableStateOf<Bitmap?>(null) }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+        imageUrl = uri
+    }
+
+    Column {
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(androidx.compose.ui.graphics.Color.White)
+                .padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            imageUrl?.let {
+                if (Build.VERSION.SDK_INT < 28) {
+                    bitmap.value = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
+                } else {
+                    val source = ImageDecoder.createSource(context.contentResolver, it)
+                    bitmap.value = ImageDecoder.decodeBitmap(source)
+                }
+
+                bitmap.value?.let { bitmap ->
+                    Image(
+                        bitmap = bitmap.asImageBitmap(),
+                        contentDescription = "Gallery Image",
+                        modifier = Modifier.size(400.dp)
+                    )
+                }
+            }
+
+            Button(
+                onClick = {
+                    launcher.launch("image/*")
+                }
+            ) {
+                Text(
+                    "Click Image",
+                )
+            }
+
+            Spacer(modifier = Modifier.padding(20.dp))
+        }
+    }
 }
 

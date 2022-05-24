@@ -34,6 +34,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import com.example.andro2client.model.Recipe
 import com.example.andro2client.model.User
+import java.io.File
 
 
 class HomeActivity: ComponentActivity() {
@@ -106,6 +107,8 @@ if(mylistdata!=null){
                 backgroundColor = MaterialTheme.colors.background
             )
             {
+
+
                 Row(
                     Modifier.clickable {
                         val intent = Intent(context, RecipeActivity::class.java)
@@ -113,15 +116,18 @@ if(mylistdata!=null){
                         context.startActivity(intent)
                     }
                 ) {
-                    ImageLoader("https://www.everblazing.org/wp-content/uploads/2017/06/avatar-372-456324.png")
-                    Spacer(modifier = Modifier.width(50.dp))
-                    Text(
-                        text = mylistdata.get(it).level + " | " + mylistdata.get(it).time,
-                        modifier = Modifier.padding(8.dp)
 
-                    )
-
-
+                    ImageLoader("R.drawable.cake")
+                    Spacer(modifier = Modifier.width(1.dp))
+                    Column(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth()
+                            .align(Alignment.CenterVertically)) {
+                        Text(text = mylistdata.get(it).time+ " | "+ mylistdata.get(it).level)
+                        Spacer(modifier = Modifier.padding(5.dp))
+                        Text(text = "By "+ mylistdata.get(it).creatorMail)
+                    }
                 }
             }
         }
@@ -131,7 +137,7 @@ if(mylistdata!=null){
 
 @ExperimentalCoilApi
 @Composable
-fun ImageLoader(imageUrl: String){
+fun ImageLoader(image: String){
 
     Box(modifier = Modifier
         .height(150.dp)
@@ -140,7 +146,7 @@ fun ImageLoader(imageUrl: String){
     ){
 
         val painter1= rememberImagePainter(
-            data=imageUrl,
+            data=File("/andro2Client/app/src/main/res/uploads/cake.jpg"),
             builder = {
                 error(R.drawable.error2)
             }
