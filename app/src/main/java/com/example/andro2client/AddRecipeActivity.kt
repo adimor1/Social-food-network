@@ -202,7 +202,7 @@ fun ImagePicker() {
                     Image(
                         bitmap = bitmap.asImageBitmap(),
                         contentDescription = "Gallery Image",
-                        modifier = Modifier.size(400.dp)
+                        modifier = Modifier.size(200.dp)
                     )
                 }
             }
