@@ -164,8 +164,6 @@ fun addRecipe(level: String, time:String, context: Context) {
             Toast.makeText(context, ""+result, Toast.LENGTH_SHORT).show()
         }
     )
-
-    context.startActivity(Intent(context, AddRecipeActivity::class.java))
 }
 
 
