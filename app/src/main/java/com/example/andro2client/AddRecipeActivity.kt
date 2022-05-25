@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -43,10 +42,19 @@ import androidx.compose.material.Text
 import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.*
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toSize
 import com.example.andro2client.ui.theme.Purple500
 import dev.chrisbanes.accompanist.glide.GlideImage
 
@@ -76,8 +84,10 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
     val focusRequester = remember {
         FocusRequester()
     }
-    val levelSate = remember { mutableStateOf("") }
-    val timeSate = remember { mutableStateOf("") }
+
+    val levelState = remember { mutableStateOf("") }
+    val timeState = remember { mutableStateOf("") }
+    val typeState = remember { mutableStateOf("") }
 
     val context = LocalContext.current
 
@@ -92,9 +102,9 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag("level"),
-            value = levelSate.value,
+            value = levelState.value,
             onValueChange = {
-                levelSate.value = it
+                levelState.value = it
             },
             label = { Text("Level") },
             keyboardOptions = KeyboardOptions(
@@ -112,9 +122,9 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag("time"),
-            value = timeSate.value,
+            value = timeState.value,
             onValueChange = {
-                timeSate.value = it
+                timeState.value = it
             },
             label = { Text("Time") },
             keyboardOptions = KeyboardOptions(
@@ -128,12 +138,76 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
                 }
             )
         )
+        Spacer(modifier = Modifier.size(16.dp))
+
+        Row {
+            RadioButton(
+                selected = typeState.value=="private",
+                onClick = { typeState.value="private" },
+                colors = RadioButtonDefaults.colors(Color.Gray)
+            )
+            Spacer(modifier = Modifier.size(16.dp))
+            Text(text = "private")
+            Spacer(modifier = Modifier.size(16.dp))
+            RadioButton(
+                selected = typeState.value=="public",
+                onClick = { typeState.value="public" },
+                colors = RadioButtonDefaults.colors(Color.Gray)
+            )
+            Spacer(modifier = Modifier.size(16.dp))
+            Text(text = "public")
+        }
+
+        //***type selector***//
+        var mExpanded by remember { mutableStateOf(false) }
+        val mCities = listOf("Italian", "Asian", "Japanese", "Mediterranean", "Dessert", "Mexican", "Indian")
+        var mSelectedText by remember { mutableStateOf("") }
+        var mTextFieldSize by remember { mutableStateOf(Size.Zero)}
+        val icon = if (mExpanded)
+            Icons.Filled.KeyboardArrowUp
+        else
+            Icons.Filled.KeyboardArrowDown
+
+        Column(Modifier.padding(20.dp)) {
+
+            OutlinedTextField(
+                value = mSelectedText,
+                onValueChange = { mSelectedText = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onGloballyPositioned { coordinates ->
+                        mTextFieldSize = coordinates.size.toSize()
+                    },
+                label = {Text("Type")},
+                trailingIcon = {
+                    Icon(icon,"contentDescription",
+                        Modifier.clickable { mExpanded = !mExpanded })
+                }
+            )
+
+            DropdownMenu(
+                expanded = mExpanded,
+                onDismissRequest = { mExpanded = false },
+                modifier = Modifier
+                    .width(with(LocalDensity.current){mTextFieldSize.width.toDp()})
+            ) {
+                mCities.forEach { label ->
+                    DropdownMenuItem(onClick = {
+                        mSelectedText = label
+                        mExpanded = false
+                    }) {
+                        Text(text = label)
+                    }
+                }
+            }
+        }
+        //***type selector***//
 
         Button(
             modifier = Modifier.padding(top = 16.dp),
-            //enabled = usernameSate.value.isNotEmpty() && passwordSate.value.isNotEmpty(),
             onClick = {
-                addRecipe(levelSate.value, timeSate.value, context)
+                mSelectedText
+                addRecipe(levelState.value, timeState.value, typeState.value, mSelectedText, context)
             }) {
             Text("Add recipe")
         }
@@ -143,7 +217,14 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
     }
 }
 
-fun addRecipe(level: String, time:String, context: Context) {
+fun addRecipe(level: String, time:String, type:String, foodtype: String, context: Context) {
+
+    foodtype
+    if(TextUtils.isEmpty(type))
+    {
+        Toast.makeText(context, "type can not be null or empty", Toast.LENGTH_SHORT).show()
+        return;
+    }
 
     if(TextUtils.isEmpty(level))
     {
@@ -157,7 +238,7 @@ fun addRecipe(level: String, time:String, context: Context) {
         return;
     }
 
-    compositeDisposable.add(myService.addRecipe(level, time, LoginUser.loginEmail)
+    compositeDisposable.add(myService.addRecipe(level, time, type, LoginUser.loginEmail)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->
@@ -216,7 +297,10 @@ fun ImagePicker() {
             }
 
             Spacer(modifier = Modifier.padding(20.dp))
+
         }
     }
 }
+
+
 

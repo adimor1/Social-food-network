@@ -79,9 +79,15 @@ private fun RecipeList(): ArrayList<Recipe>? {
                     json_objectdetail.getString("_id"),
                     json_objectdetail.getString("time"),
                     json_objectdetail.getString("level"),
+                    json_objectdetail.getString("type"),
                     json_objectdetail.getString("creatorEmail"),
                 );
-                mylistdata.add(model)
+
+                if(model.type=="public"){
+                    mylistdata.add(model)
+                }
+
+
             }
             mylistdatastate.value = mylistdata
         }

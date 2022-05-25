@@ -64,6 +64,7 @@ private fun MyRecipeList(): ArrayList<Recipe>? {
                     json_objectdetail.getString("_id"),
                     json_objectdetail.getString("time"),
                     json_objectdetail.getString("level"),
+                    json_objectdetail.getString("type"),
                     json_objectdetail.getString("creatorEmail"),
                 );
                 listdata.add(model)

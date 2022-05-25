@@ -44,13 +44,16 @@ fun RecipeScreen(recipe: Recipe){
                     )
                 }
 
-                Button(
-                    modifier = Modifier.padding(top = 16.dp),
-                    onClick = {
-                        delete(recipe, context)
-                    }) {
-                    Text("delete")
+                if(recipe.creatorMail==LoginUser.loginEmail){
+                    Button(
+                        modifier = Modifier.padding(top = 16.dp),
+                        onClick = {
+                            delete(recipe, context)
+                        }) {
+                        Text("delete")
+                    }
                 }
+
             }
         }
     }
