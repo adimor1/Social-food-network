@@ -219,7 +219,12 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
 
 fun addRecipe(level: String, time:String, type:String, foodtype: String, context: Context) {
 
-    foodtype
+
+    if(!(foodtype=="Italian" ||foodtype=="Asian"||foodtype=="Japanese"||foodtype=="Mediterranean"|| foodtype=="Dessert"||foodtype=="Mexican"||foodtype=="Indian")){
+        Toast.makeText(context, "choose type from the list", Toast.LENGTH_SHORT).show()
+        return;
+    }
+
     if(TextUtils.isEmpty(type))
     {
         Toast.makeText(context, "type can not be null or empty", Toast.LENGTH_SHORT).show()
@@ -238,7 +243,7 @@ fun addRecipe(level: String, time:String, type:String, foodtype: String, context
         return;
     }
 
-    compositeDisposable.add(myService.addRecipe(level, time, type, LoginUser.loginEmail)
+    compositeDisposable.add(myService.addRecipe(level, time, type, foodtype, LoginUser.loginEmail)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->

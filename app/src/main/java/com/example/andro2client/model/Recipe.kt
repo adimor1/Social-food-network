@@ -8,6 +8,7 @@ data class Recipe(
     val time: String,
     val level: String,
     val type: String,
+    val foodType: String,
     val creatorMail: String
     ) : Serializable
 

@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -80,6 +81,7 @@ private fun RecipeList(): ArrayList<Recipe>? {
                     json_objectdetail.getString("time"),
                     json_objectdetail.getString("level"),
                     json_objectdetail.getString("type"),
+                    json_objectdetail.getString("foodType"),
                     json_objectdetail.getString("creatorEmail"),
                 );
 
@@ -110,7 +112,8 @@ if(mylistdata!=null){
                     .padding(10.dp)
                     .fillMaxWidth()
                     .wrapContentHeight(),
-                shape = MaterialTheme.shapes.medium,
+
+                shape = RoundedCornerShape(20.dp),
                 elevation = 8.dp,
                 backgroundColor = MaterialTheme.colors.background
             )
@@ -128,6 +131,7 @@ if(mylistdata!=null){
                     ImageLoader("R.drawable.cake")
                     Spacer(modifier = Modifier.width(1.dp))
                     Column(
+
                         modifier = Modifier
                             .padding(16.dp)
                             .fillMaxWidth()
@@ -150,6 +154,8 @@ fun ImageLoader(image: String){
     Box(modifier = Modifier
         .height(150.dp)
         .width(150.dp),
+
+
         contentAlignment = Alignment.Center
     ){
 
@@ -161,6 +167,7 @@ fun ImageLoader(image: String){
         )
         val printState = painter1.state
         Image(
+
             painter = painter1,
             contentDescription = null,
             contentScale = ContentScale.Crop,
@@ -174,6 +181,8 @@ fun ImageLoader(image: String){
     }
 
 }
+
+
 
 
 

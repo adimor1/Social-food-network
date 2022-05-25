@@ -25,6 +25,7 @@ interface MyService {
     fun addRecipe(@Field("level") level:String,
                   @Field("time") time:String,
                   @Field("type") type:String,
+                  @Field("foodType") foodType:String,
                   @Field("creatorEmail") creatorEmail:String): Observable<String>
 
 
