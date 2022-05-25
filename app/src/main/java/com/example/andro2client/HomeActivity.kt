@@ -75,7 +75,9 @@ private fun RecipeList(): ArrayList<Recipe>? {
 
             for (i in 0 until answer.length()) {
                 val json_objectdetail: JSONObject =answer.getJSONObject(i)
-                val model:Recipe= Recipe(json_objectdetail.getString("time"),
+                val model:Recipe= Recipe(
+                    json_objectdetail.getString("_id"),
+                    json_objectdetail.getString("time"),
                     json_objectdetail.getString("level"),
                     json_objectdetail.getString("creatorEmail"),
                 );

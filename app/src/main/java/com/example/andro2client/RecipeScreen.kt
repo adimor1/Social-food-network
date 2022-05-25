@@ -58,7 +58,7 @@ fun RecipeScreen(recipe: Recipe){
 
 
 fun delete(recipe: Recipe, context: Context) {
-    compositeDisposable.add(myService.deleteRecipe(recipe.level)
+    compositeDisposable.add(myService.deleteRecipe(recipe.id)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->

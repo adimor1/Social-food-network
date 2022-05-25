@@ -40,5 +40,5 @@ interface MyService {
 
     @FormUrlEncoded
     @HTTP(method = "DELETE", path = "deleteRecipe", hasBody = true)
-    fun deleteRecipe(@Field("level") level: String):Observable<String>
+    fun deleteRecipe(@Field("id") id: String):Observable<String>
 }

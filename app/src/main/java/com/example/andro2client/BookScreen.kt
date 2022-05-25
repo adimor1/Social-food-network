@@ -60,7 +60,9 @@ private fun MyRecipeList(): ArrayList<Recipe>? {
 
             for (i in 0 until answer.length()) {
                 var json_objectdetail: JSONObject =answer.getJSONObject(i)
-                var model:Recipe= Recipe(json_objectdetail.getString("time"),
+                var model:Recipe= Recipe(
+                    json_objectdetail.getString("_id"),
+                    json_objectdetail.getString("time"),
                     json_objectdetail.getString("level"),
                     json_objectdetail.getString("creatorEmail"),
                 );
