@@ -1,8 +1,6 @@
 package com.example.andro2client
 
 import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -10,7 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -26,20 +23,16 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import com.example.andro2client.model.LoginUser
 import com.example.andro2client.ui.theme.Andro2ClientTheme
 import com.example.andro2client.ui.theme.MainScreen
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import java.util.jar.Manifest
 import androidx.compose.material.Text
-import androidx.activity.result.contract.ActivityResultContracts.GetContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -52,11 +45,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
-import com.example.andro2client.ui.theme.Purple500
-import dev.chrisbanes.accompanist.glide.GlideImage
+import java.io.IOException
 
 class AddRecipeActivity : ComponentActivity() {
 
@@ -88,6 +78,16 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
     val levelState = remember { mutableStateOf("") }
     val timeState = remember { mutableStateOf("") }
     val typeState = remember { mutableStateOf("") }
+
+    //***image***
+    var imageUrl by remember { mutableStateOf<Uri?>(null) }
+    val bitmap = remember { mutableStateOf<Bitmap?>(null) }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+        imageUrl = uri
+    }
+    //***image***
 
     val context = LocalContext.current
 
@@ -207,18 +207,63 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
             modifier = Modifier.padding(top = 16.dp),
             onClick = {
                 mSelectedText
-                addRecipe(levelState.value, timeState.value, typeState.value, mSelectedText, context)
+                val imgaeByte = readBytes(context, imageUrl)
+
+                addRecipe(levelState.value, timeState.value, typeState.value, mSelectedText, imgaeByte, context)
+
             }) {
             Text("Add recipe")
         }
-        ImagePicker()
+        //ImagePicker()
 
 
+        //***image***
+        Column {
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(androidx.compose.ui.graphics.Color.White)
+                    .padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                imageUrl?.let {
+                    if (Build.VERSION.SDK_INT < 28) {
+                        bitmap.value = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
+                    } else {
+                        val source = ImageDecoder.createSource(context.contentResolver, it)
+                        bitmap.value = ImageDecoder.decodeBitmap(source)
+                    }
+
+                    bitmap.value?.let { bitmap ->
+                        Image(
+                            bitmap = bitmap.asImageBitmap(),
+                            contentDescription = "Gallery Image",
+                            modifier = Modifier.size(200.dp)
+                        )
+                    }
+                }
+
+                Button(
+                    onClick = {
+                        launcher.launch("image/*")
+                    }
+                ) {
+                    Text(
+                        "Click Image",
+                    )
+                }
+
+                Spacer(modifier = Modifier.padding(20.dp))
+
+            }
+        }
+        //***image***
     }
 }
 
-fun addRecipe(level: String, time:String, type:String, foodtype: String, context: Context) {
-
+fun addRecipe(level: String, time:String, type:String, foodtype: String, byteArray: ByteArray?, context: Context) {
 
     if(!(foodtype=="Italian" ||foodtype=="Asian"||foodtype=="Japanese"||foodtype=="Mediterranean"|| foodtype=="Dessert"||foodtype=="Mexican"||foodtype=="Indian")){
         Toast.makeText(context, "choose type from the list", Toast.LENGTH_SHORT).show()
@@ -252,60 +297,9 @@ fun addRecipe(level: String, time:String, type:String, foodtype: String, context
     )
 }
 
-
-@Composable
-fun ImagePicker() {
-    var imageUrl by remember { mutableStateOf<Uri?>(null) }
-    val context = LocalContext.current
-    val bitmap = remember { mutableStateOf<Bitmap?>(null) }
-
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-        imageUrl = uri
-    }
-
-    Column {
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(androidx.compose.ui.graphics.Color.White)
-                .padding(10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            imageUrl?.let {
-                if (Build.VERSION.SDK_INT < 28) {
-                    bitmap.value = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
-                } else {
-                    val source = ImageDecoder.createSource(context.contentResolver, it)
-                    bitmap.value = ImageDecoder.decodeBitmap(source)
-                }
-
-                bitmap.value?.let { bitmap ->
-                    Image(
-                        bitmap = bitmap.asImageBitmap(),
-                        contentDescription = "Gallery Image",
-                        modifier = Modifier.size(200.dp)
-                    )
-                }
-            }
-
-            Button(
-                onClick = {
-                    launcher.launch("image/*")
-                }
-            ) {
-                Text(
-                    "Click Image",
-                )
-            }
-
-            Spacer(modifier = Modifier.padding(20.dp))
-
-        }
-    }
-}
+@Throws(IOException::class)
+private fun readBytes(context: Context, uri: Uri?): ByteArray? =
+    context.contentResolver.openInputStream(uri!!)?.buffered()?.use { it.readBytes() }
 
 
 
