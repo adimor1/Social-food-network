@@ -288,7 +288,7 @@ fun addRecipe(level: String, time:String, type:String, foodtype: String, byteArr
         return;
     }
 
-    compositeDisposable.add(myService.addRecipe(level, time, type, foodtype, LoginUser.loginEmail)
+    compositeDisposable.add(myService.addRecipe(level, time, type, foodtype, LoginUser.loginEmail, byteArray)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->

@@ -1,6 +1,5 @@
 package com.example.andro2client.Retrofit
 
-import android.telecom.Call
 import io.reactivex.Observable
 import retrofit2.http.*
 import retrofit2.http.HTTP
@@ -26,7 +25,9 @@ interface MyService {
                   @Field("time") time:String,
                   @Field("type") type:String,
                   @Field("foodType") foodType:String,
-                  @Field("creatorEmail") creatorEmail:String): Observable<String>
+                  @Field("creatorEmail") creatorEmail:String,
+                  @Field("byteArray") byteArray: ByteArray?
+    ): Observable<String>
 
 
     @GET ("getRecipe")
