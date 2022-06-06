@@ -26,7 +26,7 @@ interface MyService {
                   @Field("type") type:String,
                   @Field("foodType") foodType:String,
                   @Field("creatorEmail") creatorEmail:String,
-                  @Field("byteArray") byteArray: ByteArray?
+                  @Field("imageRec") imageRec:String,
     ): Observable<String>
 
 

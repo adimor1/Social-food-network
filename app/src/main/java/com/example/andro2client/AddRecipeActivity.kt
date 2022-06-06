@@ -1,5 +1,6 @@
 package com.example.andro2client
 
+import kotlin.random.Random
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
@@ -27,7 +28,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.andro2client.model.LoginUser
 import com.example.andro2client.ui.theme.Andro2ClientTheme
 import com.example.andro2client.ui.theme.MainScreen
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -46,7 +46,10 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.toSize
-import java.io.IOException
+import com.example.andro2client.model.LoginUser
+import com.example.andro2client.model.LoginUser.loginEmail
+import java.lang.Exception
+
 
 class AddRecipeActivity : ComponentActivity() {
 
@@ -79,15 +82,6 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
     val timeState = remember { mutableStateOf("") }
     val typeState = remember { mutableStateOf("") }
 
-    //***image***
-    var imageUrl by remember { mutableStateOf<Uri?>(null) }
-    val bitmap = remember { mutableStateOf<Bitmap?>(null) }
-
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-        imageUrl = uri
-    }
-    //***image***
 
     val context = LocalContext.current
 
@@ -206,64 +200,76 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
         Button(
             modifier = Modifier.padding(top = 16.dp),
             onClick = {
-                mSelectedText
-                val imgaeByte = readBytes(context, imageUrl)
 
-                addRecipe(levelState.value, timeState.value, typeState.value, mSelectedText, imgaeByte, context)
+                addRecipe(levelState.value, timeState.value, typeState.value, mSelectedText, context)
 
             }) {
             Text("Add recipe")
         }
-        //ImagePicker()
+        ImagePicker()
 
-
-        //***image***
-        Column {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(androidx.compose.ui.graphics.Color.White)
-                    .padding(10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                imageUrl?.let {
-                    if (Build.VERSION.SDK_INT < 28) {
-                        bitmap.value = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
-                    } else {
-                        val source = ImageDecoder.createSource(context.contentResolver, it)
-                        bitmap.value = ImageDecoder.decodeBitmap(source)
-                    }
-
-                    bitmap.value?.let { bitmap ->
-                        Image(
-                            bitmap = bitmap.asImageBitmap(),
-                            contentDescription = "Gallery Image",
-                            modifier = Modifier.size(200.dp)
-                        )
-                    }
-                }
-
-                Button(
-                    onClick = {
-                        launcher.launch("image/*")
-                    }
-                ) {
-                    Text(
-                        "Click Image",
-                    )
-                }
-
-                Spacer(modifier = Modifier.padding(20.dp))
-
-            }
-        }
-        //***image***
     }
 }
 
-fun addRecipe(level: String, time:String, type:String, foodtype: String, byteArray: ByteArray?, context: Context) {
+@Composable
+fun ImagePicker() {
+
+    val context = LocalContext.current
+
+    var imageUrl by remember { mutableStateOf<Uri?>(null) }
+    val bitmap = remember { mutableStateOf<Bitmap?>(null) }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+        imageUrl = uri
+    }
+
+    Column {
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(androidx.compose.ui.graphics.Color.White)
+                .padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            imageUrl?.let {
+                if (Build.VERSION.SDK_INT < 28) {
+                    bitmap.value = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
+                } else {
+                    val source = ImageDecoder.createSource(context.contentResolver, it)
+                    bitmap.value = ImageDecoder.decodeBitmap(source)
+                }
+
+                bitmap.value?.let { bitmap ->
+                    Image(
+                        bitmap = bitmap.asImageBitmap(),
+                        contentDescription = "Gallery Image",
+                        modifier = Modifier.size(200.dp)
+                    )
+                }
+            }
+
+            Button(
+                onClick = {
+                    launcher.launch("image/*")
+                }
+            ) {
+                Text(
+                    "Click Image",
+                )
+            }
+
+            Spacer(modifier = Modifier.padding(20.dp))
+
+        }
+    }
+
+}
+
+fun addRecipe(level: String, time:String, type:String, foodtype: String, context: Context) {
+
 
     if(!(foodtype=="Italian" ||foodtype=="Asian"||foodtype=="Japanese"||foodtype=="Mediterranean"|| foodtype=="Dessert"||foodtype=="Mexican"||foodtype=="Indian")){
         Toast.makeText(context, "choose type from the list", Toast.LENGTH_SHORT).show()
@@ -288,7 +294,9 @@ fun addRecipe(level: String, time:String, type:String, foodtype: String, byteArr
         return;
     }
 
-    compositeDisposable.add(myService.addRecipe(level, time, type, foodtype, LoginUser.loginEmail, byteArray)
+    val numRec = Random.nextInt(0, 100000)
+
+    compositeDisposable.add(myService.addRecipe(level, time, type, foodtype, LoginUser.loginEmail, numRec.toString())
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->
@@ -297,9 +305,7 @@ fun addRecipe(level: String, time:String, type:String, foodtype: String, byteArr
     )
 }
 
-@Throws(IOException::class)
-private fun readBytes(context: Context, uri: Uri?): ByteArray? =
-    context.contentResolver.openInputStream(uri!!)?.buffered()?.use { it.readBytes() }
+
 
 
 

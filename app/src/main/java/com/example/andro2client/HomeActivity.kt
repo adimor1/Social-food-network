@@ -1,11 +1,9 @@
 package com.example.andro2client
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,23 +17,17 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import com.example.andro2client.ui.theme.Andro2ClientTheme
 import com.example.andro2client.ui.theme.MainScreen
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.json.JSONArray
 import org.json.JSONObject
 import com.example.andro2client.model.Recipe
-import com.example.andro2client.model.User
-import java.io.File
 
 
 class HomeActivity: ComponentActivity() {
@@ -83,6 +75,7 @@ private fun RecipeList(): ArrayList<Recipe>? {
                     json_objectdetail.getString("type"),
                     json_objectdetail.getString("foodType"),
                     json_objectdetail.getString("creatorEmail"),
+                    json_objectdetail.getString("imageRec"),
                 );
 
                 if(model.type=="public"){
@@ -128,7 +121,7 @@ if(mylistdata!=null){
                     }
                 ) {
 
-                    ImageLoader("R.drawable.cake")
+                    ImageLoader(mylistdata.get(it).imageRec)
                     Spacer(modifier = Modifier.width(1.dp))
                     Column(
 
@@ -149,7 +142,7 @@ if(mylistdata!=null){
 
 @ExperimentalCoilApi
 @Composable
-fun ImageLoader(image: String){
+fun ImageLoader(imageRec: String){
 
     Box(modifier = Modifier
         .height(150.dp)
@@ -160,7 +153,7 @@ fun ImageLoader(image: String){
     ){
 
         val painter1= rememberImagePainter(
-            data=File("/andro2Client/app/src/main/res/uploads/cake.jpg"),
+            data="https://firebasestorage.googleapis.com/v0/b/myapplication-67a01.appspot.com/o/andro2%2F"+imageRec+".jpg?alt=media&token=688d30e7-801a-4eaf-ade9-7f0d29da4ef4",
             builder = {
                 error(R.drawable.error2)
             }
