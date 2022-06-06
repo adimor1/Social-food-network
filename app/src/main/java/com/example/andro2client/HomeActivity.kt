@@ -153,7 +153,7 @@ fun ImageLoader(imageRec: String){
     ){
 
         val painter1= rememberImagePainter(
-            data="https://firebasestorage.googleapis.com/v0/b/myapplication-67a01.appspot.com/o/andro2%2F"+imageRec+".jpg?alt=media&token=688d30e7-801a-4eaf-ade9-7f0d29da4ef4",
+            data="https://firebasestorage.googleapis.com/v0/b/andro2client.appspot.com/o/"+imageRec+"?alt=media&token=125af2e1-dbde-49f8-9627-16bc938ebdb7",
             builder = {
                 error(R.drawable.error2)
             }
