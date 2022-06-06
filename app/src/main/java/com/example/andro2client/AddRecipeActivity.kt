@@ -47,8 +47,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.toSize
 import com.example.andro2client.model.LoginUser
-import com.example.andro2client.model.LoginUser.loginEmail
-import java.lang.Exception
+import com.google.firebase.storage.FirebaseStorage
 
 
 class AddRecipeActivity : ComponentActivity() {
@@ -197,17 +196,70 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
         }
         //***type selector***//
 
+        val context = LocalContext.current
+
+        var imageUrl by remember { mutableStateOf<Uri?>(null) }
+        val bitmap = remember { mutableStateOf<Bitmap?>(null) }
+
+        val launcher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+            imageUrl = uri
+        }
         Button(
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = 20.dp),
             onClick = {
 
-                addRecipe(levelState.value, timeState.value, typeState.value, mSelectedText, context)
+                addRecipe(levelState.value, timeState.value, typeState.value, mSelectedText, context, imageUrl)
 
             }) {
             Text("Add recipe")
         }
-        ImagePicker()
+        Column {
 
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(androidx.compose.ui.graphics.Color.White)
+                    .padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                imageUrl?.let {
+                    if (Build.VERSION.SDK_INT < 28) {
+                        bitmap.value = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
+                    } else {
+                        val source = ImageDecoder.createSource(context.contentResolver, it)
+                        bitmap.value = ImageDecoder.decodeBitmap(source)
+                    }
+
+                    bitmap.value?.let { bitmap ->
+                        Image(
+                            bitmap = bitmap.asImageBitmap(),
+                            contentDescription = "Gallery Image",
+                            modifier = Modifier.size(200.dp)
+                        )
+                    }
+                }
+
+                Button(
+                    onClick = {
+                        launcher.launch("image/*")
+                    }
+                ) {
+                    Text(
+                        "Click Image",
+                    )
+                }
+
+                Spacer(modifier = Modifier.padding(20.dp))
+
+            }
+        }
+
+
+
+
+      //  ImagePicker()
     }
 }
 
@@ -268,7 +320,7 @@ fun ImagePicker() {
 
 }
 
-fun addRecipe(level: String, time:String, type:String, foodtype: String, context: Context) {
+fun addRecipe(level: String, time:String, type:String, foodtype: String, context: Context, imageUrl: Uri?) {
 
 
     if(!(foodtype=="Italian" ||foodtype=="Asian"||foodtype=="Japanese"||foodtype=="Mediterranean"|| foodtype=="Dessert"||foodtype=="Mexican"||foodtype=="Indian")){
@@ -294,18 +346,28 @@ fun addRecipe(level: String, time:String, type:String, foodtype: String, context
         return;
     }
 
-    val numRec = Random.nextInt(0, 100000)
+    val imageRec = Random.nextInt(0, 100000)
 
-    compositeDisposable.add(myService.addRecipe(level, time, type, foodtype, LoginUser.loginEmail, numRec.toString())
+    compositeDisposable.add(myService.addRecipe(level, time, type, foodtype, LoginUser.loginEmail, imageRec.toString())
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->
             Toast.makeText(context, ""+result, Toast.LENGTH_SHORT).show()
+            addImage(imageRec.toString(), imageUrl)
         }
     )
 }
 
+fun addImage(imageRec: String, imageUrl: Uri?) {
 
+    val storageReference = FirebaseStorage.getInstance().getReference(imageRec)
+    if (imageUrl != null) {
+        storageReference.putFile(imageUrl).addOnSuccessListener {
+
+        }
+    }
+
+}
 
 
 
