@@ -174,9 +174,3 @@ fun ImageLoader(imageRec: String){
     }
 
 }
-
-
-
-
-
-
