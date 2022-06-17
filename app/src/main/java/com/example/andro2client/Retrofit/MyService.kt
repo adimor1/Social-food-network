@@ -4,9 +4,6 @@ import io.reactivex.Observable
 import retrofit2.http.*
 import retrofit2.http.HTTP
 
-
-
-
 interface MyService {
     @POST ("register")
     @FormUrlEncoded
@@ -44,4 +41,8 @@ interface MyService {
     @FormUrlEncoded
     @HTTP(method = "DELETE", path = "deleteRecipe", hasBody = true)
     fun deleteRecipe(@Field("id") id: String):Observable<String>
+
+    @FormUrlEncoded
+    @HTTP(method = "PUT", path = "editUser", hasBody = true)
+    fun editUser(@Field("id") id: String):Observable<String>
 }

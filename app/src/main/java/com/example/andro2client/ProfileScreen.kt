@@ -1,9 +1,12 @@
 package com.example.andro2client
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -11,10 +14,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.andro2client.model.LoginUser
 import com.example.andro2client.model.Recipe
 import com.example.andro2client.model.User
+import com.example.myapplication.delete
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.json.JSONObject
@@ -42,7 +47,7 @@ private fun ProfileDetails() :User?{
             var objectAnswer: JSONObject =answer.getJSONObject(0)
 
 
-            user.value= User(objectAnswer.getString("email"), objectAnswer.getString("name"));
+            user.value= User(objectAnswer.getString("_id"), objectAnswer.getString("email"), objectAnswer.getString("name"));
 
         }
 
@@ -52,7 +57,7 @@ private fun ProfileDetails() :User?{
 
 @Composable
 fun ProfileView(user: User?){
-
+    val context = LocalContext.current
     if(user!=null){
         Column(
             modifier= Modifier
@@ -69,6 +74,24 @@ fun ProfileView(user: User?){
                 text = user.email
             )
         }
+
+        Button(
+            modifier = Modifier.padding(top = 16.dp),
+            onClick = {
+                editUser(user, context)
+            }) {
+            Text("edit")
+        }
     }
 
+}
+
+fun editUser(user: User, context:Context) {
+    compositeDisposable.add(myService.editUser(user.id)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { result ->
+            context.startActivity(Intent(context, HomeActivity::class.java))
+        }
+    )
 }
