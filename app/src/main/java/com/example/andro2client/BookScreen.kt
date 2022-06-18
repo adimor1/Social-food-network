@@ -33,6 +33,10 @@ import org.json.JSONArray
 import org.json.JSONObject
 import com.example.andro2client.model.Recipe
 import com.example.andro2client.model.User
+import android.R.string
+
+
+
 
 
 
@@ -71,9 +75,59 @@ private fun MyRecipeList(): ArrayList<Recipe>? {
                 );
                 listdata.add(model)
             }
-            listdatastate.value = listdata
+            //listdatastate.value = listdata
         }
     )
+
+    compositeDisposable.add(myService.getUserDetails(LoginUser.loginEmail)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { result ->
+
+            val answer = JSONArray(result)
+            var json_objectdetail: JSONObject =answer.getJSONObject(0)
+            var saveRecipes = json_objectdetail.getString("saverecipes")
+
+            saveRecipes= saveRecipes.replace("[", "")
+            saveRecipes= saveRecipes.replace("]", "")
+            saveRecipes= saveRecipes.replace("\"", "")
+
+
+            val stringArray: List<String> = saveRecipes.split(",")
+
+            for (i in 0 until stringArray.size) {
+
+
+                compositeDisposable.add(myService.getRecipeById(stringArray[i])
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe { result ->
+
+                        val answer = JSONObject(result)
+
+
+                            var model:Recipe= Recipe(
+                                answer.getString("_id"),
+                                answer.getString("time"),
+                                answer.getString("level"),
+                                answer.getString("type"),
+                                answer.getString("foodType"),
+                                answer.getString("creatorEmail"),
+                                answer.getString("imageRec"),
+                            );
+                            listdata.add(model)
+
+                        listdatastate.value = listdata
+                    }
+                )
+
+
+
+            }
+        }
+    )
+
+
     return listdatastate.value
 }
 

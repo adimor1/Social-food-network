@@ -51,4 +51,8 @@ interface MyService {
     @HTTP(method = "PUT", path = "savetomylist", hasBody = true)
     fun saveToMyList(@Field("id") id: String,
                  @Field("email") email:String):Observable<String>
+
+    @POST ("getRecipeById")
+    @FormUrlEncoded
+    fun getRecipeById(@Field("id") id:String):Observable<String>
 }
