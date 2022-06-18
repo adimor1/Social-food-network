@@ -34,19 +34,24 @@ import org.json.JSONObject
 import com.example.andro2client.model.Recipe
 import com.example.andro2client.model.User
 import android.R.string
-
-
-
-
-
+import android.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.graphics.Color.Companion.White
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun BookScreenView(modifier: Modifier = Modifier) {
 
     val listdatastate= MyRecipeList()
-    bookView(listdatastate)
+    val listdatastate2= MySavedList()
+     var joinedList = ArrayList<Recipe>()
+
+    listdatastate?.let { joinedList.addAll(it) };
+    listdatastate2?.let { joinedList.addAll(it) }
+    bookView(joinedList)
 }
+
+
 
 @Composable
 private fun MyRecipeList(): ArrayList<Recipe>? {
@@ -75,60 +80,51 @@ private fun MyRecipeList(): ArrayList<Recipe>? {
                 );
                 listdata.add(model)
             }
-            //listdatastate.value = listdata
+            listdatastate.value = listdata
         }
     )
 
-    compositeDisposable.add(myService.getUserDetails(LoginUser.loginEmail)
+
+
+
+    return listdatastate.value
+}
+
+
+
+@Composable
+private fun MySavedList(): ArrayList<Recipe>? {
+    val listdata2 = ArrayList<Recipe>()
+    val listdatastate2 = remember {
+        mutableStateOf<ArrayList<Recipe>?>(null)
+    }
+
+    compositeDisposable.add(myService.getRecipeById(LoginUser.loginEmail)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->
 
             val answer = JSONArray(result)
-            var json_objectdetail: JSONObject =answer.getJSONObject(0)
-            var saveRecipes = json_objectdetail.getString("saverecipes")
 
-            saveRecipes= saveRecipes.replace("[", "")
-            saveRecipes= saveRecipes.replace("]", "")
-            saveRecipes= saveRecipes.replace("\"", "")
-
-
-            val stringArray: List<String> = saveRecipes.split(",")
-
-            for (i in 0 until stringArray.size) {
-
-
-                compositeDisposable.add(myService.getRecipeById(stringArray[i])
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe { result ->
-
-                        val answer = JSONObject(result)
-
-
-                            var model:Recipe= Recipe(
-                                answer.getString("_id"),
-                                answer.getString("time"),
-                                answer.getString("level"),
-                                answer.getString("type"),
-                                answer.getString("foodType"),
-                                answer.getString("creatorEmail"),
-                                answer.getString("imageRec"),
-                            );
-                            listdata.add(model)
-
-                        listdatastate.value = listdata
-                    }
-                )
-
-
-
+            for (i in 0 until answer.length()) {
+                var json_objectdetail: JSONObject =answer.getJSONObject(i)
+                var model:Recipe= Recipe(
+                    json_objectdetail.getString("_id"),
+                    json_objectdetail.getString("time"),
+                    json_objectdetail.getString("level"),
+                    json_objectdetail.getString("type"),
+                    json_objectdetail.getString("foodType"),
+                    json_objectdetail.getString("creatorEmail"),
+                    json_objectdetail.getString("imageRec"),
+                );
+                listdata2.add(model)
             }
+            listdatastate2.value = listdata2
         }
     )
 
 
-    return listdatastate.value
+    return listdatastate2.value
 }
 
 @Composable
@@ -139,6 +135,7 @@ fun bookView(listdata: ArrayList<Recipe>?){
     if(listdata!=null){
 
         LazyColumn {
+
 
             items(listdata.size) {
                 Card(
@@ -169,6 +166,7 @@ fun bookView(listdata: ArrayList<Recipe>?){
             }
         }
     }
+
 }
 
 

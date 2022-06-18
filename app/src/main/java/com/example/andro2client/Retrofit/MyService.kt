@@ -54,5 +54,5 @@ interface MyService {
 
     @POST ("getRecipeById")
     @FormUrlEncoded
-    fun getRecipeById(@Field("id") id:String):Observable<String>
+    fun getRecipeById(@Field("email") email:String):Observable<String>
 }
