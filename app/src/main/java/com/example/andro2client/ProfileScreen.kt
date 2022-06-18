@@ -6,7 +6,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -14,7 +17,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.andro2client.model.LoginUser
 import com.example.andro2client.model.Recipe
@@ -57,8 +64,15 @@ private fun ProfileDetails() :User?{
 
 @Composable
 fun ProfileView(user: User?){
-    val context = LocalContext.current
+    val focusRequester = remember {
+        FocusRequester()
+    }
+
     if(user!=null){
+        val context = LocalContext.current
+        val username = user!!.name
+        val nameSate = remember { mutableStateOf(username) }
+
         Column(
             modifier= Modifier
                 .fillMaxWidth()
@@ -67,31 +81,51 @@ fun ProfileView(user: User?){
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Text(
-                text = user.name
-            )
+
             Text(
                 text = user.email
             )
+
+
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth().testTag("name"),
+                value = nameSate.value,
+                onValueChange = {
+                    nameSate.value = it
+                },
+                label = { Text("Name") },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        focusRequester.requestFocus()
+                    }
+                )
+            )
+
+            Button(
+                modifier = Modifier.padding(top = 16.dp),
+                onClick = {
+                    editUser(user, context, nameSate.value)
+                }) {
+                Text("Update")
+            }
         }
 
-        Button(
-            modifier = Modifier.padding(top = 16.dp),
-            onClick = {
-                editUser(user, context)
-            }) {
-            Text("edit")
-        }
+
     }
 
 }
 
-fun editUser(user: User, context:Context) {
-    compositeDisposable.add(myService.editUser(user.id)
+fun editUser(user: User, context:Context, name:String) {
+    compositeDisposable.add(myService.editUser(user.id, name)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->
-            context.startActivity(Intent(context, HomeActivity::class.java))
+
         }
     )
 }

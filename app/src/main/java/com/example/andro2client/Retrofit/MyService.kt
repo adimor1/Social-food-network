@@ -44,5 +44,6 @@ interface MyService {
 
     @FormUrlEncoded
     @HTTP(method = "PUT", path = "editUser", hasBody = true)
-    fun editUser(@Field("id") id: String):Observable<String>
+    fun editUser(@Field("id") id: String,
+                 @Field("name") name:String):Observable<String>
 }
