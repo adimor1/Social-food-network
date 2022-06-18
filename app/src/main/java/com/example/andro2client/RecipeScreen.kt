@@ -1,6 +1,5 @@
 package com.example.myapplication
 
-
 import android.content.Context
 import android.content.Intent
 import android.text.TextUtils
@@ -11,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -35,30 +35,49 @@ fun RecipeScreen(recipe: Recipe){
         BoxWithConstraints() {
             Surface() {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(scrollState)
+                    modifier= Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
                         text = recipe.level
                     )
-                }
 
-                if(recipe.creatorMail==LoginUser.loginEmail){
-                    Button(
-                        modifier = Modifier.padding(top = 16.dp),
-                        onClick = {
-                            delete(recipe, context)
-                        }) {
-                        Text("delete")
+                    if(recipe.creatorMail==LoginUser.loginEmail){
+                        Button(
+                            modifier = Modifier.padding(top = 16.dp),
+                            onClick = {
+                                delete(recipe, context)
+                            }) {
+                            Text("delete")
+                        }
+                    }
+                    else{
+                        Button(
+                            modifier = Modifier.padding(top = 16.dp),
+                            onClick = {
+                                saveToMyList(recipe, context)
+                            }) {
+                            Text("save to my list")
+                        }
                     }
                 }
-
             }
         }
     }
 }
 
+fun saveToMyList(recipe: Recipe, context: Context) {
+    compositeDisposable.add(myService.saveToMyList(recipe.id, LoginUser.loginEmail)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { result ->
+
+        }
+    )
+}
 
 fun delete(recipe: Recipe, context: Context) {
     compositeDisposable.add(myService.deleteRecipe(recipe.id)
@@ -68,7 +87,5 @@ fun delete(recipe: Recipe, context: Context) {
             context.startActivity(Intent(context, HomeActivity::class.java))
         }
     )
-
-
 }
 
