@@ -2,6 +2,7 @@ package com.example.andro2client
 
 import kotlin.random.Random
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -241,16 +242,27 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
                     }
                 }
 
-                Button(
-                    onClick = {
-                        launcher.launch("image/*")
+                Row {
+                    Button(
+                        onClick = {
+                            launcher.launch("image/*")
+                        }
+                    ) {
+                        Text(
+                            "Click Image",
+                        )
                     }
-                ) {
-                    Text(
-                        "Click Image",
-                    )
-                }
 
+                    Button(
+                        onClick = {
+                            context.startActivity(Intent(context, CameraActivity::class.java))
+                        }
+                    ) {
+                        Text(
+                            "Take New Photo",
+                        )
+                    }
+                }
                 Spacer(modifier = Modifier.padding(20.dp))
 
             }
@@ -298,22 +310,34 @@ fun ImagePicker() {
                     Image(
                         bitmap = bitmap.asImageBitmap(),
                         contentDescription = "Gallery Image",
-                        modifier = Modifier.size(200.dp)
+                        modifier = Modifier.size(2.dp)
+                    )
+                }
+            }
+            Row() {
+                Button(
+                    onClick = {
+                        launcher.launch("image/*")
+                    }
+                ) {
+                    Text(
+                        "Click Image",
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        context.startActivity(Intent(context, CameraActivity::class.java))
+                    }
+                ) {
+                    Text(
+                        "Take New Photo",
                     )
                 }
             }
 
-            Button(
-                onClick = {
-                    launcher.launch("image/*")
-                }
-            ) {
-                Text(
-                    "Click Image",
-                )
-            }
 
-            Spacer(modifier = Modifier.padding(20.dp))
+            Spacer(modifier = Modifier.padding(2.dp))
 
         }
     }
