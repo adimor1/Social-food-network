@@ -3,18 +3,22 @@ package com.example.andro2client
 import kotlin.random.Random
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.TextUtils
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -46,6 +50,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import com.example.andro2client.model.LoginUser
 import com.google.firebase.storage.FirebaseStorage
@@ -206,6 +213,20 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
             contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
             imageUrl = uri
         }
+
+
+        val myImage : Bitmap=BitmapFactory.decodeResource(Resources.getSystem(), android.R.mipmap.sym_def_app_icon)
+        val result= remember {
+            mutableStateOf<Bitmap>(myImage)
+        }
+        val loadImage = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()){
+            if (it != null) {
+                result.value=it
+            }
+        }
+
+
+
         Button(
             modifier = Modifier.padding(top = 20.dp),
             onClick = {
@@ -242,7 +263,7 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
                     }
                 }
 
-                Row {
+                Row() {
                     Button(
                         onClick = {
                             launcher.launch("image/*")
@@ -255,94 +276,28 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
 
                     Button(
                         onClick = {
-                            context.startActivity(Intent(context, CameraActivity::class.java))
+                            loadImage.launch()
                         }
                     ) {
                         Text(
-                            "Take New Photo",
+                            "Click Image",
                         )
                     }
                 }
-                Spacer(modifier = Modifier.padding(20.dp))
 
-            }
-        }
-
-
-
-
-      //  ImagePicker()
-    }
-}
-
-@Composable
-fun ImagePicker() {
-
-    val context = LocalContext.current
-
-    var imageUrl by remember { mutableStateOf<Uri?>(null) }
-    val bitmap = remember { mutableStateOf<Bitmap?>(null) }
-
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-        imageUrl = uri
-    }
-
-    Column {
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(androidx.compose.ui.graphics.Color.White)
-                .padding(10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            imageUrl?.let {
-                if (Build.VERSION.SDK_INT < 28) {
-                    bitmap.value = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
-                } else {
-                    val source = ImageDecoder.createSource(context.contentResolver, it)
-                    bitmap.value = ImageDecoder.decodeBitmap(source)
-                }
-
-                bitmap.value?.let { bitmap ->
                     Image(
-                        bitmap = bitmap.asImageBitmap(),
-                        contentDescription = "Gallery Image",
-                        modifier = Modifier.size(2.dp)
+                        result.value.asImageBitmap(), contentDescription = "image",
+                        modifier= Modifier
+                            .size(300.dp)
+                            .padding(10.dp)
                     )
                 }
             }
-            Row() {
-                Button(
-                    onClick = {
-                        launcher.launch("image/*")
-                    }
-                ) {
-                    Text(
-                        "Click Image",
-                    )
-                }
-
-                Button(
-                    onClick = {
-                        context.startActivity(Intent(context, CameraActivity::class.java))
-                    }
-                ) {
-                    Text(
-                        "Take New Photo",
-                    )
-                }
-            }
-
-
-            Spacer(modifier = Modifier.padding(2.dp))
-
         }
+
     }
 
-}
+
 
 fun addRecipe(level: String, time:String, type:String, foodtype: String, context: Context, imageUrl: Uri?) {
 

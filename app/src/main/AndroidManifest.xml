@@ -37,10 +37,6 @@
         <activity
             android:name=".RecipeActivity"
             android:exported="false" />
-        <activity
-            android:name=".CameraActivity"
-            android:exported="false" />
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
