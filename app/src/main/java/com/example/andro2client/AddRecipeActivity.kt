@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import com.example.andro2client.model.LoginUser
 import com.google.firebase.storage.FirebaseStorage
+import java.io.ByteArrayOutputStream
 
 
 class AddRecipeActivity : ComponentActivity() {
@@ -209,7 +210,6 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
         val myImage : Bitmap=BitmapFactory.decodeResource(Resources.getSystem(), android.R.mipmap.sym_def_app_icon)
 
         val result= remember { mutableStateOf<Bitmap>(myImage) }
-        val bitmap = remember { mutableStateOf<Bitmap?>(null) }
 
         var imageUrl by remember { mutableStateOf<Uri?>(null) }
 
@@ -218,11 +218,11 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
             imageUrl = uri
         }
 
-
-
-        val loadImage = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()){
+        val loadImage = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.TakePicturePreview()){
             if (it != null) {
                 result.value=it
+                imageUrl = getImageUriFromBitmap(context, it)
             }
         }
 
@@ -249,13 +249,13 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
             ) {
                 imageUrl?.let {
                     if (Build.VERSION.SDK_INT < 28) {
-                        bitmap.value = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
+                        result.value = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
                     } else {
                         val source = ImageDecoder.createSource(context.contentResolver, it)
-                        bitmap.value = ImageDecoder.decodeBitmap(source)
+                        result.value = ImageDecoder.decodeBitmap(source)
                     }
 
-                    bitmap.value?.let { bitmap ->
+                    result.value?.let { bitmap ->
                         Image(
                             bitmap = bitmap.asImageBitmap(),
                             contentDescription = "Gallery Image",
@@ -285,20 +285,18 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
                         )
                     }
                 }
-
-                    Image(
-                        result.value.asImageBitmap(), contentDescription = "image",
-                        modifier= Modifier
-                            .size(300.dp)
-                            .padding(10.dp)
-                    )
                 }
             }
         }
 
     }
 
-
+fun getImageUriFromBitmap(context: Context, bitmap: Bitmap): Uri{
+    val bytes = ByteArrayOutputStream()
+    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+    val path = MediaStore.Images.Media.insertImage(context.contentResolver, bitmap, "Title", null)
+    return Uri.parse(path.toString())
+}
 
 fun addRecipe(level: String, time:String, type:String, foodtype: String, context: Context, imageUrl: Uri?) {
 
