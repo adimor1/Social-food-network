@@ -206,8 +206,12 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
 
         val context = LocalContext.current
 
-        var imageUrl by remember { mutableStateOf<Uri?>(null) }
+        val myImage : Bitmap=BitmapFactory.decodeResource(Resources.getSystem(), android.R.mipmap.sym_def_app_icon)
+
+        val result= remember { mutableStateOf<Bitmap>(myImage) }
         val bitmap = remember { mutableStateOf<Bitmap?>(null) }
+
+        var imageUrl by remember { mutableStateOf<Uri?>(null) }
 
         val launcher = rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -215,10 +219,7 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
         }
 
 
-        val myImage : Bitmap=BitmapFactory.decodeResource(Resources.getSystem(), android.R.mipmap.sym_def_app_icon)
-        val result= remember {
-            mutableStateOf<Bitmap>(myImage)
-        }
+
         val loadImage = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()){
             if (it != null) {
                 result.value=it
