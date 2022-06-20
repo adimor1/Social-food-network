@@ -113,6 +113,14 @@ fun ProfileView(user: User?){
                 }) {
                 Text("Update")
             }
+
+            Button(
+                modifier = Modifier.padding(top = 16.dp),
+                onClick = {
+                    context.startActivity(Intent(context, MainActivity::class.java))
+                }) {
+                Text("logout")
+            }
         }
 
 

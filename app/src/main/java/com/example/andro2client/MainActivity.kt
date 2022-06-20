@@ -61,6 +61,19 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val dbManager: DBManager
+
+
+
+        dbManager =  DBManager(this);
+        dbManager.open();
+        val userName:String = dbManager.userexit( )
+        if(userName!=""){
+        LoginUser.loginEmail = userName
+            this.startActivity(Intent(this, HomeActivity::class.java))
+        }
+        dbManager.close()
+
 
         setContent {
             Andro2ClientTheme {
@@ -232,6 +245,12 @@ fun loginUser(userName: String, password: String, context: Context) {
             if(result=="\"Login success\""){
                 context.startActivity(Intent(context, HomeActivity::class.java))
                 LoginUser.loginEmail = userName
+
+                val dbManager: DBManager
+                dbManager =  DBManager(context);
+                dbManager.open();
+                dbManager.Sighningup(0, userName, password)
+                dbManager.close()
 
             }
         }

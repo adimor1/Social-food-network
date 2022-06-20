@@ -1,5 +1,6 @@
 package com.example.andro2client
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.SQLException
@@ -20,17 +21,27 @@ class DBManager(private val context: Context) {
         dbHelper?.close()
     }
 
-    fun userexit(username: String, password: String): Boolean {
+    fun delete(idevents: String) {
+        val selectionArgs = arrayOf(idevents)
+        database!!.delete("users", "_id=1", selectionArgs)
+    }
+
+    @SuppressLint("Range")
+    fun userexit(): String {
         val selectionArgs: Array<String>
-        selectionArgs = arrayOf(username, password)
+        selectionArgs = arrayOf("1")
         val Select = "select *" +
-                " from users " +
-                " where username = ? and" +
-                " password = ? "
+                " from users where _id=? " ;
+
         val cursor = database!!.rawQuery(Select, selectionArgs)
-        return if (cursor != null) {
-            cursor.count > 0
-        } else false
+        if (cursor != null) {
+            if (cursor.count > 0) {
+                cursor.moveToFirst()
+                return cursor.getString(cursor.getColumnIndex("username"))
+            }
+        }
+        return ""
+
     }
 
     fun Sighningup(
@@ -38,22 +49,15 @@ class DBManager(private val context: Context) {
         password: String?
     ) {
         val contentValue = ContentValues()
-        if (_id != 0) {
-            contentValue.put(DatabaseHelper._id, _id)
-        }
+
+            contentValue.put(DatabaseHelper._id, "1")
+
         contentValue.put(DatabaseHelper.username, username)
         contentValue.put(DatabaseHelper.password, password)
-        if (_id == 0) {
+
             database!!.insert(DatabaseHelper.users, null, contentValue)
-        } else {
-            val whereArgs = arrayOf(Integer.toString(_id))
-            database!!.update(
-                DatabaseHelper.users,
-                contentValue,
-                DatabaseHelper._id.toString() + "=?",
-                whereArgs
-            )
-        }
+
+
     }
 }
 

@@ -12,7 +12,7 @@ class DatabaseHelper(context: Context?) :
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        //db.execSQL("drop table menu");
+        db.execSQL("drop table users");
         db.execSQL(CREATE_TABLE_users)
     }
 
@@ -21,7 +21,7 @@ class DatabaseHelper(context: Context?) :
         const val DB_NAME = "mymoviesreviews.DB"
 
         // database version
-        const val DB_VERSION = 1
+        const val DB_VERSION = 7
 
         // Table Name
         const val users = "users"
@@ -32,9 +32,10 @@ class DatabaseHelper(context: Context?) :
         const val password = "password"
         const val email = "email"
 
+
         // Creating table query
         private const val CREATE_TABLE_users = ("create table IF NOT EXISTS " + users +
-                "(" + _id + " INTEGER PRIMARY KEY AUTOINCREMENT , "
+                "(" + _id + " int , "
                 + username + " text , "
                 + password + " text ,"
                 + email + " text "
