@@ -47,6 +47,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 lateinit var myService: MyService
+
 internal var compositeDisposable= CompositeDisposable()
 
 class MainActivity : ComponentActivity() {
@@ -197,6 +198,7 @@ fun loginUser(userName: String, password: String, context: Context) {
             if(result=="\"Login success\""){
                 context.startActivity(Intent(context, HomeActivity::class.java))
                 LoginUser.loginEmail = userName
+
             }
         }
     )
