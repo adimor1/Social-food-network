@@ -24,11 +24,12 @@ import com.example.andro2client.*
 import com.example.andro2client.compositeDisposable
 import com.example.andro2client.model.LoginUser
 import com.example.andro2client.model.Recipe
+import com.example.andro2client.model.RecipeUser
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 @Composable
-fun RecipeScreen(recipe: Recipe){
+fun RecipeScreen(recipe: RecipeUser){
     val scrollState = rememberScrollState()
     val context = LocalContext.current
     Column(modifier = Modifier.fillMaxSize()) {
@@ -69,7 +70,7 @@ fun RecipeScreen(recipe: Recipe){
     }
 }
 
-fun saveToMyList(recipe: Recipe, context: Context) {
+fun saveToMyList(recipe: RecipeUser, context: Context) {
     compositeDisposable.add(myService.saveToMyList(recipe.id, LoginUser.loginEmail)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
@@ -79,7 +80,7 @@ fun saveToMyList(recipe: Recipe, context: Context) {
     )
 }
 
-fun delete(recipe: Recipe, context: Context) {
+fun delete(recipe: RecipeUser, context: Context) {
     compositeDisposable.add(myService.deleteRecipe(recipe.id)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())

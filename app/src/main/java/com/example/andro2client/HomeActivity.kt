@@ -28,6 +28,8 @@ import io.reactivex.schedulers.Schedulers
 import org.json.JSONArray
 import org.json.JSONObject
 import com.example.andro2client.model.Recipe
+import com.example.andro2client.model.RecipeUser
+import com.example.andro2client.model.User
 
 
 class HomeActivity: ComponentActivity() {
@@ -49,17 +51,19 @@ class HomeActivity: ComponentActivity() {
 fun HomeScreenView(modifier: Modifier = Modifier) {
 
     val listdatastate= RecipeList()
-    bla(listdatastate)
+
+    HomeView(listdatastate)
+
 }
 
 @Composable
-private fun RecipeList(): ArrayList<Recipe>? {
-    val mylistdata = ArrayList<Recipe>()
+private fun RecipeList(): ArrayList<RecipeUser>? {
+    val mylistdata = ArrayList<RecipeUser>()
     val mylistdatastate = remember {
-        mutableStateOf<ArrayList<Recipe>?>(null)
+        mutableStateOf<ArrayList<RecipeUser>?>(null)
     }
 
-    compositeDisposable.add(myService.getRecipe()
+    compositeDisposable.add(myService.getrecipeuser()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->
@@ -68,7 +72,9 @@ private fun RecipeList(): ArrayList<Recipe>? {
 
             for (i in 0 until answer.length()) {
                 val json_objectdetail: JSONObject =answer.getJSONObject(i)
-                val model:Recipe= Recipe(
+                val userrecipe: JSONArray = json_objectdetail.getJSONArray("userrecipe")
+                val bluev: JSONObject =userrecipe.getJSONObject(0)
+                val model:RecipeUser= RecipeUser(
                     json_objectdetail.getString("_id"),
                     json_objectdetail.getString("time"),
                     json_objectdetail.getString("level"),
@@ -76,6 +82,7 @@ private fun RecipeList(): ArrayList<Recipe>? {
                     json_objectdetail.getString("foodType"),
                     json_objectdetail.getString("creatorEmail"),
                     json_objectdetail.getString("imageRec"),
+                    bluev.getString("isBlueV")
                 );
 
                 if(model.type=="public"){
@@ -84,14 +91,18 @@ private fun RecipeList(): ArrayList<Recipe>? {
 
 
             }
+
             mylistdatastate.value = mylistdata
         }
     )
+
     return mylistdatastate.value
 }
 
+
+
 @Composable
-fun bla(mylistdata: ArrayList<Recipe>?){
+fun HomeView(mylistdata: ArrayList<RecipeUser>?){
     val context = LocalContext.current
 
 
@@ -131,7 +142,50 @@ if(mylistdata!=null){
                             .align(Alignment.CenterVertically)) {
                         Text(text = mylistdata.get(it).time+ " | "+ mylistdata.get(it).level)
                         Spacer(modifier = Modifier.padding(5.dp))
-                        Text(text = "By "+ mylistdata.get(it).creatorMail)
+
+                        Row() {
+
+
+
+                                    if(mylistdata.get(it).isBlueV =="true") {
+                                        Box(
+                                            modifier = Modifier
+                                                .height(25.dp)
+                                                .width(25.dp),
+
+
+                                            contentAlignment = Alignment.Center
+                                        ) {
+
+                                            val painter1 = rememberImagePainter(
+                                                data = "https://firebasestorage.googleapis.com/v0/b/andro2client.appspot.com/o/app%2Ftwitter600.jpg?alt=media&token=95fd022b-62ee-4925-be05-2f4507450da0",
+                                                builder = {
+                                                    error(R.drawable.error2)
+                                                }
+                                            )
+                                            val printState = painter1.state
+                                            Image(
+
+                                                painter = painter1,
+                                                contentDescription = null,
+                                                contentScale = ContentScale.Crop,
+                                                modifier = Modifier.size(20.dp)
+
+                                            )
+
+                                            if (printState is ImagePainter.State.Loading) {
+                                                CircularProgressIndicator()
+                                            }
+                                        }
+
+                                    }
+
+
+
+                                Text(text = "By "+ mylistdata.get(it).creatorMail)
+
+                        }
+
                     }
                 }
             }
