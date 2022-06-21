@@ -10,6 +10,7 @@ data class User(
     val birth: String,
     val type: String,
     val gender: String,
+    val isBlueV: String
 
 ) : Serializable
 

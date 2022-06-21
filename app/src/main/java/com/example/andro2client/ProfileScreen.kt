@@ -66,7 +66,8 @@ private fun ProfileDetails() :User?{
                 objectAnswer.getString("favorite"),
                 objectAnswer.getString("birth"),
                 objectAnswer.getString("type"),
-                objectAnswer.getString("gender")
+                objectAnswer.getString("gender"),
+                objectAnswer.getString("isBlueV")
                 );
         }
 
@@ -85,6 +86,7 @@ fun ProfileView(user: User?){
         val username = user!!.name
         val nameSate = remember { mutableStateOf(username) }
         val birthSate = remember { mutableStateOf(user.birth) }
+        val isBlueVState = remember { mutableStateOf(user.isBlueV) }
 
 
         Column(
@@ -97,42 +99,45 @@ fun ProfileView(user: User?){
 
             Row() {
 
-                Box(
-                    modifier = Modifier
-                        .height(40.dp)
-                        .width(40.dp),
+                if(isBlueVState.value=="true") {
+                    Box(
+                        modifier = Modifier
+                            .height(40.dp)
+                            .width(40.dp),
 
 
-                    contentAlignment = Alignment.Center
-                ) {
+                        contentAlignment = Alignment.Center
+                    ) {
 
-                    val painter1 = rememberImagePainter(
-                        data = "https://firebasestorage.googleapis.com/v0/b/andro2client.appspot.com/o/app%2Ftwitter600.jpg?alt=media&token=95fd022b-62ee-4925-be05-2f4507450da0",
-                        builder = {
-                            error(R.drawable.error2)
+                        val painter1 = rememberImagePainter(
+                            data = "https://firebasestorage.googleapis.com/v0/b/andro2client.appspot.com/o/app%2Ftwitter600.jpg?alt=media&token=95fd022b-62ee-4925-be05-2f4507450da0",
+                            builder = {
+                                error(R.drawable.error2)
+                            }
+                        )
+                        val printState = painter1.state
+                        Image(
+
+                            painter = painter1,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.size(50.dp)
+
+                        )
+
+                        if (printState is ImagePainter.State.Loading) {
+                            CircularProgressIndicator()
                         }
-                    )
-                    val printState = painter1.state
-                    Image(
-
-                        painter = painter1,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.size(50.dp)
-
-                    )
-
-                    if (printState is ImagePainter.State.Loading) {
-                        CircularProgressIndicator()
                     }
+                    Spacer(modifier = Modifier.size(16.dp))
                 }
-                Spacer(modifier = Modifier.size(16.dp))
-
                 Text(
                     text = user.email,
                     fontSize = 25.sp
                 )
             }
+
+            Spacer(modifier = Modifier.size(30.dp))
 
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth().testTag("name"),
