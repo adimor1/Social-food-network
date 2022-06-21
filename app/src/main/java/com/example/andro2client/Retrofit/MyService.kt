@@ -9,7 +9,11 @@ interface MyService {
     @FormUrlEncoded
     fun registerUser(@Field("email") email:String,
                      @Field("name") name:String,
-                     @Field("password") password:String): Observable<String>
+                     @Field("password") password:String,
+                     @Field("birth") birth:String,
+                     @Field("favorite") favorite:String,
+                     @Field("type") type:String,
+                     @Field("gender") gender:String): Observable<String>
 
     @POST ("login")
     @FormUrlEncoded
@@ -45,7 +49,11 @@ interface MyService {
     @FormUrlEncoded
     @HTTP(method = "PUT", path = "editUser", hasBody = true)
     fun editUser(@Field("id") id: String,
-                 @Field("name") name:String):Observable<String>
+                 @Field("name") name:String,
+                 @Field("birth") birth:String,
+                 @Field("favorite") favorite: String,
+                 @Field("type") type:String,
+                 @Field("gender") gender: String):Observable<String>
 
     @FormUrlEncoded
     @HTTP(method = "PUT", path = "savetomylist", hasBody = true)

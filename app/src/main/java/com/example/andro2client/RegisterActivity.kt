@@ -304,7 +304,29 @@ fun register(email: String, name:String, password: String,  birth: String, favor
         return;
     }
 
-    compositeDisposable.add(myService.registerUser(email, name, password)
+    if(TextUtils.isEmpty(birth))
+    {
+        Toast.makeText(context, "birthday year can not be null or empty", Toast.LENGTH_SHORT).show()
+        return;
+    }
+
+    if(TextUtils.isEmpty(favorite))
+    {
+        Toast.makeText(context, "favorite type can not be null or empty", Toast.LENGTH_SHORT).show()
+        return;
+    }
+    if(TextUtils.isEmpty(type))
+    {
+        Toast.makeText(context, "User Type can not be null or empty", Toast.LENGTH_SHORT).show()
+        return;
+    }
+    if(TextUtils.isEmpty(gender))
+    {
+        Toast.makeText(context, "gender can not be null or empty", Toast.LENGTH_SHORT).show()
+        return;
+    }
+
+    compositeDisposable.add(myService.registerUser(email, name, password, birth, favorite, type, gender)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->
