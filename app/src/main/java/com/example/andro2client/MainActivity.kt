@@ -153,7 +153,7 @@ fun LoginView(modifier: Modifier = Modifier) {
             onValueChange = {
                 usernameSate.value = it
             },
-            label = { Text("Username") },
+            label = { Text("Email") },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
