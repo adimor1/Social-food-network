@@ -63,6 +63,7 @@ fun RegisterView(modifier: Modifier = Modifier) {
     }
     val emailSate = remember { mutableStateOf("") }
     val nameSate = remember { mutableStateOf("") }
+    val birthSate = remember { mutableStateOf("") }
     val passwordSate = remember { mutableStateOf("") }
     val isVisibility = remember {
         mutableStateOf(false)
@@ -151,9 +152,9 @@ fun RegisterView(modifier: Modifier = Modifier) {
         )
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth().testTag("birthYear"),
-            value = nameSate.value,
+            value = birthSate.value,
             onValueChange = {
-                nameSate.value = it
+                birthSate.value = it
             },
             label = { Text("Birth year") },
             keyboardOptions = KeyboardOptions(
@@ -251,19 +252,19 @@ fun RegisterView(modifier: Modifier = Modifier) {
         }
         Spacer(modifier = Modifier.size(5.dp))
 
-        val typeState = remember { mutableStateOf("") }
+        val genderState = remember { mutableStateOf("") }
         Row {
             RadioButton(
-                selected = typeState.value=="Female",
-                onClick = { typeState.value="Female" },
+                selected = genderState.value=="Female",
+                onClick = { genderState.value="Female" },
                 colors = RadioButtonDefaults.colors(Color.Gray)
             )
             Spacer(modifier = Modifier.size(16.dp))
             Text(text = "Female")
             Spacer(modifier = Modifier.size(16.dp))
             RadioButton(
-                selected = typeState.value=="Male",
-                onClick = { typeState.value="Male" },
+                selected = genderState.value=="Male",
+                onClick = { genderState.value="Male" },
                 colors = RadioButtonDefaults.colors(Color.Gray)
             )
             Spacer(modifier = Modifier.size(16.dp))
@@ -276,14 +277,14 @@ fun RegisterView(modifier: Modifier = Modifier) {
             modifier = Modifier.padding(top = 16.dp),
             //enabled = usernameSate.value.isNotEmpty() && passwordSate.value.isNotEmpty(),
             onClick = {
-                register(emailSate.value, nameSate.value, passwordSate.value, context)
+                register(emailSate.value, nameSate.value, passwordSate.value, birthSate.value, mSelectedText,mSelectedTextType, genderState.value, context)
             }) {
             Text("Create")
         }
     }
 }
 
-fun register(email: String, name:String, password: String, context: Context) {
+fun register(email: String, name:String, password: String,  birth: String, favorite:String,  type:String, gender:String, context: Context) {
 
     if(TextUtils.isEmpty(email))
     {
