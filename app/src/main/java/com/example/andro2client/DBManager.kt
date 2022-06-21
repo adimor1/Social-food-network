@@ -22,8 +22,8 @@ class DBManager(private val context: Context) {
     }
 
     fun delete(idevents: String) {
-        val selectionArgs = arrayOf(idevents)
-        database!!.delete("users", "_id=1", selectionArgs)
+        val selectionArgs = arrayOf("1")
+        database!!.delete("users", "_id=?", selectionArgs)
     }
 
     @SuppressLint("Range")

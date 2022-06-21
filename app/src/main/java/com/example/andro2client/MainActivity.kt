@@ -43,10 +43,10 @@ import com.example.andro2client.Retrofit.MyService
 import com.example.andro2client.Retrofit.RetrofitClient
 import com.example.andro2client.model.LoginUser
 import com.example.andro2client.ui.theme.Andro2ClientTheme
-import com.example.andro2client.ui.theme.MainScreen
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import org.json.JSONObject
 
 lateinit var myService: MyService
 
@@ -242,8 +242,18 @@ fun loginUser(userName: String, password: String, context: Context) {
         .subscribe { result ->
             Toast.makeText(context, ""+result, Toast.LENGTH_SHORT).show()
 
-            if(result=="\"Login success\""){
-                context.startActivity(Intent(context, HomeActivity::class.java))
+            if(result!="\"Email not exist\"" && result!="\"Worng password\""){
+
+                val answer = JSONObject(result)
+                val isAdmin = answer.getString("isAdmin")
+
+                if(isAdmin == "true"){
+                    context.startActivity(Intent(context, AdminHomeActivity::class.java))
+                }
+                else{
+                    context.startActivity(Intent(context, HomeActivity::class.java))
+                }
+
                 LoginUser.loginEmail = userName
 
                 val dbManager: DBManager

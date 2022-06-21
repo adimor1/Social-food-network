@@ -21,7 +21,7 @@ class DatabaseHelper(context: Context?) :
         const val DB_NAME = "mymoviesreviews.DB"
 
         // database version
-        const val DB_VERSION = 7
+        const val DB_VERSION = 15
 
         // Table Name
         const val users = "users"

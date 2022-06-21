@@ -117,7 +117,9 @@ fun ProfileView(user: User?){
             Button(
                 modifier = Modifier.padding(top = 16.dp),
                 onClick = {
+                    deleteDBM(context)
                     context.startActivity(Intent(context, MainActivity::class.java))
+
                 }) {
                 Text("logout")
             }
@@ -125,6 +127,15 @@ fun ProfileView(user: User?){
 
 
     }
+
+}
+
+fun deleteDBM(context: Context){
+
+    val dbManager: DBManager
+    dbManager =  DBManager(context);
+    dbManager.open();
+    dbManager.delete(LoginUser.loginEmail)
 
 }
 
