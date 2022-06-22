@@ -1,16 +1,11 @@
 package com.example.andro2client
 
 import android.content.Intent
-import android.os.Build
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -18,26 +13,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.andro2client.model.LoginUser
-import com.example.andro2client.ui.theme.Andro2ClientTheme
-import com.example.andro2client.ui.theme.MainScreen
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.json.JSONArray
 import org.json.JSONObject
 import com.example.andro2client.model.Recipe
-import com.example.andro2client.model.User
-import android.R.string
-import android.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Gray
-import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.*
 
+@ExperimentalFoundationApi
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun BookScreenView(modifier: Modifier = Modifier) {
@@ -48,7 +39,7 @@ fun BookScreenView(modifier: Modifier = Modifier) {
 
     listdatastate?.let { joinedList.addAll(it) };
     listdatastate2?.let { joinedList.addAll(it) }
-    bookView(joinedList)
+    bookView(listdatastate, listdatastate2)
 }
 
 
@@ -127,15 +118,34 @@ private fun MySavedList(): ArrayList<Recipe>? {
     return listdatastate2.value
 }
 
+@ExperimentalFoundationApi
 @Composable
-fun bookView(listdata: ArrayList<Recipe>?){
+fun bookView(listdata: ArrayList<Recipe>?, listdata2: ArrayList<Recipe>?){
     val context = LocalContext.current
 
 
-    if(listdata!=null){
+
+    if(listdata!=null&&listdata2!=null){
+
 
         LazyColumn {
 
+
+            stickyHeader {
+                Card(elevation = 4.dp,  backgroundColor =  Color(0xFF302E2E)) {
+
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(50.dp), Alignment.Center, ){
+                        Row(){
+                            Icon(Icons.Rounded.List, contentDescription = "Localized description",   tint = Color.White,)
+                            Spacer(modifier = Modifier.size(10.dp))
+                            Text(text = "Your Recipes", fontWeight = FontWeight.Bold, color = Color.White)
+                        }
+                    }
+                }
+            }
 
             items(listdata.size) {
                 Card(
@@ -158,6 +168,52 @@ fun bookView(listdata: ArrayList<Recipe>?){
                     ) {
                         Text(
                             text = listdata.get(it).level + " | " + listdata.get(it).time,
+                            modifier = Modifier.padding(8.dp)
+
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.size(50.dp))
+            }
+
+
+            stickyHeader {
+                Card(elevation = 4.dp,  backgroundColor =  Color(0xFF302E2E)) {
+
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(50.dp), Alignment.Center, ){
+                        Row(){
+                            Icon(Icons.Rounded.Bookmark, contentDescription = "Localized description",   tint = Color.White,)
+                            Spacer(modifier = Modifier.size(10.dp))
+                            Text(text = "Saved Recipes", fontWeight = FontWeight.Bold, color = Color.White)
+                        }
+                    }
+                }
+            }
+
+            items(listdata2.size) {
+                Card(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    shape = MaterialTheme.shapes.medium,
+                    elevation = 5.dp,
+                    backgroundColor = MaterialTheme.colors.background
+                )
+                {
+                    Row(
+
+                        Modifier.clickable {
+                            val intent = Intent(context, RecipeActivity::class.java)
+                            intent.putExtra("RECIPE_ID", listdata2.get(it))
+                            context.startActivity(intent)
+                        }
+                    ) {
+                        Text(
+                            text = listdata2.get(it).level + " | " + listdata2.get(it).time,
                             modifier = Modifier.padding(8.dp)
 
                         )
