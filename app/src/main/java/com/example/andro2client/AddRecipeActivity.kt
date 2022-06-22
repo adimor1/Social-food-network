@@ -44,6 +44,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.rounded.AddAPhoto
+import androidx.compose.material.icons.rounded.FileUpload
+import androidx.compose.material.icons.rounded.Update
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -86,12 +89,34 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
         FocusRequester()
     }
 
+    val nameState = remember { mutableStateOf("") }
+    val IngredientsState = remember { mutableStateOf("") }
+    val InstructionsState = remember { mutableStateOf("") }
     val levelState = remember { mutableStateOf("") }
     val timeState = remember { mutableStateOf("") }
     val typeState = remember { mutableStateOf("") }
 
-
     val context = LocalContext.current
+    val myImage: Bitmap = BitmapFactory.decodeResource(
+        Resources.getSystem(),
+        android.R.mipmap.sym_def_app_icon
+    )
+    val result = remember { mutableStateOf<Bitmap>(myImage) }
+    var imageUrl by remember { mutableStateOf<Uri?>(null) }
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        imageUrl = uri
+    }
+    val loadImage = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicturePreview()
+    ) {
+        if (it != null) {
+            result.value = it
+            imageUrl = getImageUriFromBitmap(context, it)
+        }
+    }
+
 
     Column(
         modifier
@@ -100,77 +125,144 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        imageUrl?.let {
+            if (Build.VERSION.SDK_INT < 28) {
+                result.value =
+                    MediaStore.Images.Media.getBitmap(context.contentResolver, it)
+            } else {
+                val source = ImageDecoder.createSource(context.contentResolver, it)
+                result.value = ImageDecoder.decodeBitmap(source)
+            }
+
+            result.value?.let { bitmap ->
+                Image(
+                    bitmap = bitmap.asImageBitmap(),
+                    contentDescription = "Gallery Image",
+                    modifier = Modifier.size(110.dp)
+                )
+            }
+        }
+
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag("level"),
-            value = levelState.value,
+                .testTag("name"),
+            value = nameState.value,
             onValueChange = {
-                levelState.value = it
+                nameState.value = it
             },
-            label = { Text("Level") },
+            label = { Text("Name") },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
             ),
-
             keyboardActions = KeyboardActions(
                 onNext = {
                     focusRequester.requestFocus()
                 }
             )
         )
+
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag("time"),
-            value = timeState.value,
+                .height(90.dp)
+                .testTag("ingredients"),
+            value = IngredientsState.value,
             onValueChange = {
-                timeState.value = it
+                IngredientsState.value = it
             },
-            label = { Text("Time") },
+            label = { Text("Ingredients") },
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
+                keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
             ),
-
             keyboardActions = KeyboardActions(
                 onNext = {
                     focusRequester.requestFocus()
                 }
             )
         )
-        Spacer(modifier = Modifier.size(16.dp))
 
-        Row {
-            RadioButton(
-                selected = typeState.value=="private",
-                onClick = { typeState.value="private" },
-                colors = RadioButtonDefaults.colors(Color.Gray)
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(90.dp)
+                .testTag("instructions"),
+            value = InstructionsState.value,
+            onValueChange = {
+                InstructionsState.value = it
+            },
+            label = { Text("Instructions") },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next
+            ),
+            keyboardActions = KeyboardActions(
+                onNext = {
+                    focusRequester.requestFocus()
+                }
             )
-            Spacer(modifier = Modifier.size(16.dp))
-            Text(text = "private")
-            Spacer(modifier = Modifier.size(16.dp))
-            RadioButton(
-                selected = typeState.value=="public",
-                onClick = { typeState.value="public" },
-                colors = RadioButtonDefaults.colors(Color.Gray)
+        )
+
+        Row() {
+
+            OutlinedTextField(
+                modifier = Modifier
+                    .width(175.dp)
+                    .testTag("level"),
+                value = levelState.value,
+                onValueChange = {
+                    levelState.value = it
+                },
+                label = { Text("Level") },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
+
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        focusRequester.requestFocus()
+                    }
+                )
             )
-            Spacer(modifier = Modifier.size(16.dp))
-            Text(text = "public")
+
+            Spacer(modifier = Modifier.size(10.dp))
+
+            OutlinedTextField(
+                modifier = Modifier
+                    .width(175.dp)
+                    .testTag("time"),
+                value = timeState.value,
+                onValueChange = {
+                    timeState.value = it
+                },
+                label = { Text("Time") },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Next
+                ),
+
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        focusRequester.requestFocus()
+                    }
+                )
+            )
         }
+
 
         //***type selector***//
         var mExpanded by remember { mutableStateOf(false) }
-        val mCities = listOf("Italian", "Asian", "Japanese", "Mediterranean", "Dessert", "Mexican", "Indian")
+        val mCities =
+            listOf("Italian", "Asian", "Japanese", "Mediterranean", "Dessert", "Mexican", "Indian")
         var mSelectedText by remember { mutableStateOf("") }
-        var mTextFieldSize by remember { mutableStateOf(Size.Zero)}
+        var mTextFieldSize by remember { mutableStateOf(Size.Zero) }
         val icon = if (mExpanded)
             Icons.Filled.KeyboardArrowUp
         else
             Icons.Filled.KeyboardArrowDown
-
-        Column(Modifier.padding(20.dp)) {
 
             OutlinedTextField(
                 value = mSelectedText,
@@ -180,9 +272,9 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
                     .onGloballyPositioned { coordinates ->
                         mTextFieldSize = coordinates.size.toSize()
                     },
-                label = {Text("Type")},
+                label = { Text("Type") },
                 trailingIcon = {
-                    Icon(icon,"contentDescription",
+                    Icon(icon, "contentDescription",
                         Modifier.clickable { mExpanded = !mExpanded })
                 }
             )
@@ -191,7 +283,7 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
                 expanded = mExpanded,
                 onDismissRequest = { mExpanded = false },
                 modifier = Modifier
-                    .width(with(LocalDensity.current){mTextFieldSize.width.toDp()})
+                    .width(with(LocalDensity.current) { mTextFieldSize.width.toDp() })
             ) {
                 mCities.forEach { label ->
                     DropdownMenuItem(onClick = {
@@ -202,93 +294,92 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
                     }
                 }
             }
-        }
-        //***type selector***//
 
-        val context = LocalContext.current
-
-        val myImage : Bitmap=BitmapFactory.decodeResource(Resources.getSystem(), android.R.mipmap.sym_def_app_icon)
-
-        val result= remember { mutableStateOf<Bitmap>(myImage) }
-
-        var imageUrl by remember { mutableStateOf<Uri?>(null) }
-
-        val launcher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-            imageUrl = uri
-        }
-
-        val loadImage = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.TakePicturePreview()){
-            if (it != null) {
-                result.value=it
-                imageUrl = getImageUriFromBitmap(context, it)
-            }
-        }
+            //***type selector***//
 
 
+        Spacer(modifier = Modifier.size(1.dp))
 
-        Button(
-            modifier = Modifier.padding(top = 20.dp),
-            onClick = {
+        Row {
 
-                addRecipe(levelState.value, timeState.value, typeState.value, mSelectedText, context, imageUrl)
+            Column() {
 
-            }) {
-            Text("Add recipe")
-        }
-        Column {
-
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(androidx.compose.ui.graphics.Color.White)
-                    .padding(10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                imageUrl?.let {
-                    if (Build.VERSION.SDK_INT < 28) {
-                        result.value = MediaStore.Images.Media.getBitmap(context.contentResolver, it)
-                    } else {
-                        val source = ImageDecoder.createSource(context.contentResolver, it)
-                        result.value = ImageDecoder.decodeBitmap(source)
-                    }
-
-                    result.value?.let { bitmap ->
-                        Image(
-                            bitmap = bitmap.asImageBitmap(),
-                            contentDescription = "Gallery Image",
-                            modifier = Modifier.size(200.dp)
-                        )
-                    }
-                }
 
                 Row() {
-                    Button(
-                        onClick = {
-                            launcher.launch("image/*")
-                        }
-                    ) {
-                        Text(
-                            "Click Image",
-                        )
-                    }
+                    RadioButton(
+                        selected = typeState.value == "private",
+                        onClick = { typeState.value = "private" },
+                        colors = RadioButtonDefaults.colors(Color.DarkGray)
+                    )
+                    Spacer(modifier = Modifier.size(16.dp))
+                    Text(text = "private")
+                }
+                Spacer(modifier = Modifier.size(16.dp))
+                Row() {
 
-                    Button(
-                        onClick = {
-                            loadImage.launch()
-                        }
-                    ) {
-                        Text(
-                            "Click Image",
-                        )
-                    }
+
+                    RadioButton(
+                        selected = typeState.value == "public",
+                        onClick = { typeState.value = "public" },
+                        colors = RadioButtonDefaults.colors(Color.DarkGray)
+                    )
+                    Spacer(modifier = Modifier.size(16.dp))
+                    Text(text = "public")
                 }
-                }
+
+            }
+            Spacer(modifier = Modifier.width(110.dp))
+            Row() {
+                val isChecked = remember { mutableStateOf(false) }
+                Checkbox(checked = isChecked.value,
+                    onCheckedChange = { isChecked.value = it },
+                    colors = CheckboxDefaults.colors(Color.DarkGray))
+                Spacer(modifier = Modifier.size(5.dp))
+                Text(text = "Sponsored recipe")
+            }
+
+        }
+        Spacer(modifier = Modifier.width(10.dp))
+
+        Row() {
+            Button(
+                onClick = {
+                    launcher.launch("image/*")
+
+                },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.DarkGray,
+                    contentColor = Color.DarkGray)
+            ) {
+                Icon(Icons.Rounded.FileUpload, contentDescription = "",   tint = Color.White)
+            }
+            Spacer(modifier = Modifier.size(1.dp))
+            Button(
+                onClick = {
+                    loadImage.launch()
+
+                }, colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.DarkGray,
+                contentColor = Color.DarkGray)
+            ) {
+                Icon(Icons.Rounded.AddAPhoto, contentDescription = "",   tint = Color.White)
+            }
+            Spacer(modifier = Modifier.width(150.dp))
+            Button(
+                onClick = {
+                    addRecipe(
+                        levelState.value,
+                        timeState.value,
+                        typeState.value,
+                        mSelectedText,
+                        context,
+                        imageUrl
+                    )
+                }) {
+                Text("Save")
             }
         }
-
+    }
     }
 
 fun getImageUriFromBitmap(context: Context, bitmap: Bitmap): Uri{
