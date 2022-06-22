@@ -9,14 +9,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
@@ -47,6 +51,7 @@ class HomeActivity: ComponentActivity() {
     }
 }
 
+@ExperimentalFoundationApi
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun HomeScreenView(modifier: Modifier = Modifier) {
@@ -122,17 +127,47 @@ private fun RecipeList(): ArrayList<RecipeUser>? {
 
 
 
+@ExperimentalFoundationApi
 @Composable
 fun HomeView(mylistdata: ArrayList<RecipeUser>?,  favorite: String){
     val context = LocalContext.current
+    val favoritelist = ArrayList<RecipeUser>()
+    val otherlist = ArrayList<RecipeUser>()
 
+    if (mylistdata != null) {
+        for (i in 0 until mylistdata.size) {
+
+            if(mylistdata[i].foodType == favorite){
+                favoritelist.add(mylistdata[i])
+            }
+            else{
+                otherlist.add(mylistdata[i])
+            }
+        }
+    }
 
 
 if(mylistdata!=null){
     
     LazyColumn {
+        stickyHeader {
+            Spacer(modifier = Modifier.size(50.dp))
+            Card(elevation = 4.dp,  backgroundColor =  Color(0xFF302E2E)) {
 
-        items(mylistdata.size) {
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(50.dp), Alignment.Center, ){
+                    Row(){
+                        Icon(Icons.Rounded.Favorite, contentDescription = "Localized description",   tint = Color.White,)
+                        Spacer(modifier = Modifier.size(10.dp))
+                        Text(text = "Recommended for you", fontWeight = FontWeight.Bold, color = Color.White)
+                    }
+                }
+            }
+        }
+
+        items(favoritelist.size) {
             Card(
                 modifier = Modifier
                     .padding(10.dp)
@@ -144,38 +179,28 @@ if(mylistdata!=null){
                 backgroundColor = MaterialTheme.colors.background
             )
             {
-
-
                 Row(
                     Modifier.clickable {
                         val intent = Intent(context, RecipeActivity::class.java)
-                        intent.putExtra("RECIPE_ID", mylistdata.get(it))
+                        intent.putExtra("RECIPE_ID", favoritelist.get(it))
                         context.startActivity(intent)
                     }
                 ) {
-
-                    ImageLoader(mylistdata.get(it).imageRec)
+                    ImageLoader(favoritelist.get(it).imageRec)
                     Spacer(modifier = Modifier.width(1.dp))
                     Column(
-
                         modifier = Modifier
                             .padding(16.dp)
                             .fillMaxWidth()
                             .align(Alignment.CenterVertically)) {
-                        Text(text = mylistdata.get(it).time+ " | "+ mylistdata.get(it).level)
+                        Text(text = favoritelist.get(it).time+ " | "+ favoritelist.get(it).level)
                         Spacer(modifier = Modifier.padding(5.dp))
-
                         Row() {
-
-
-
-                                    if(mylistdata.get(it).isBlueV =="true") {
+                                    if(favoritelist.get(it).isBlueV =="true") {
                                         Box(
                                             modifier = Modifier
                                                 .height(25.dp)
                                                 .width(25.dp),
-
-
                                             contentAlignment = Alignment.Center
                                         ) {
 
@@ -192,20 +217,95 @@ if(mylistdata!=null){
                                                 contentDescription = null,
                                                 contentScale = ContentScale.Crop,
                                                 modifier = Modifier.size(20.dp)
-
                                             )
-
                                             if (printState is ImagePainter.State.Loading) {
                                                 CircularProgressIndicator()
                                             }
                                         }
-
                                     }
+                                Text(text = "By "+ favoritelist.get(it).creatorMail)
+                        }
 
+                    }
+                }
+            }
+        }
 
+        //*****OTHER-LIST*****
+        stickyHeader {
+            Spacer(modifier = Modifier.size(50.dp))
+            Card(elevation = 4.dp,  backgroundColor =  Color(0xFF302E2E)) {
 
-                                Text(text = "By "+ mylistdata.get(it).creatorMail)
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(50.dp), Alignment.Center, ){
+                    Row(){
+                        Icon(Icons.Rounded.LibraryBooks, contentDescription = "Localized description",   tint = Color.White,)
+                        Spacer(modifier = Modifier.size(10.dp))
+                        Text(text = "More recipes", fontWeight = FontWeight.Bold, color = Color.White)
+                    }
+                }
+            }
+        }
 
+        items(otherlist.size) {
+            Card(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+
+                shape = RoundedCornerShape(20.dp),
+                elevation = 8.dp,
+                backgroundColor = MaterialTheme.colors.background
+            )
+            {
+                Row(
+                    Modifier.clickable {
+                        val intent = Intent(context, RecipeActivity::class.java)
+                        intent.putExtra("RECIPE_ID", otherlist.get(it))
+                        context.startActivity(intent)
+                    }
+                ) {
+                    ImageLoader(otherlist.get(it).imageRec)
+                    Spacer(modifier = Modifier.width(1.dp))
+                    Column(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth()
+                            .align(Alignment.CenterVertically)) {
+                        Text(text = otherlist.get(it).time+ " | "+ otherlist.get(it).level)
+                        Spacer(modifier = Modifier.padding(5.dp))
+                        Row() {
+                            if(otherlist.get(it).isBlueV =="true") {
+                                Box(
+                                    modifier = Modifier
+                                        .height(25.dp)
+                                        .width(25.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+
+                                    val painter1 = rememberImagePainter(
+                                        data = "https://firebasestorage.googleapis.com/v0/b/andro2client.appspot.com/o/app%2Ftwitter600.jpg?alt=media&token=95fd022b-62ee-4925-be05-2f4507450da0",
+                                        builder = {
+                                            error(R.drawable.error2)
+                                        }
+                                    )
+                                    val printState = painter1.state
+                                    Image(
+
+                                        painter = painter1,
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    if (printState is ImagePainter.State.Loading) {
+                                        CircularProgressIndicator()
+                                    }
+                                }
+                            }
+                            Text(text = "By "+ otherlist.get(it).creatorMail)
                         }
 
                     }
