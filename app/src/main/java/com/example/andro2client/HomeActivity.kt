@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
+import com.example.andro2client.model.LoginUser
 import com.example.andro2client.ui.theme.Andro2ClientTheme
 import com.example.andro2client.ui.theme.MainScreen
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -52,8 +53,28 @@ fun HomeScreenView(modifier: Modifier = Modifier) {
 
     val listdatastate= RecipeList()
 
-    HomeView(listdatastate)
+    HomeView(listdatastate, Favorite())
 
+}
+
+@Composable
+private fun Favorite() :String{
+
+    val favoriteState = remember { mutableStateOf("") }
+
+    compositeDisposable.add(myService.getUserDetails(LoginUser.loginEmail)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { result ->
+
+            val answer = JSONArray(result)
+            val objectAnswer: JSONObject =answer.getJSONObject(0)
+
+             favoriteState.value = objectAnswer.getString("favorite")
+        }
+
+    )
+    return favoriteState.value
 }
 
 @Composable
@@ -102,8 +123,9 @@ private fun RecipeList(): ArrayList<RecipeUser>? {
 
 
 @Composable
-fun HomeView(mylistdata: ArrayList<RecipeUser>?){
+fun HomeView(mylistdata: ArrayList<RecipeUser>?,  favorite: String){
     val context = LocalContext.current
+
 
 
 if(mylistdata!=null){
@@ -197,6 +219,7 @@ if(mylistdata!=null){
 @ExperimentalCoilApi
 @Composable
 fun ImageLoader(imageRec: String){
+
 
     Box(modifier = Modifier
         .height(150.dp)

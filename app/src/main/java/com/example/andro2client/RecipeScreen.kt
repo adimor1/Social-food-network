@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Bookmark
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -61,6 +64,7 @@ fun RecipeScreen(recipe: RecipeUser){
                             onClick = {
                                 saveToMyList(recipe, context)
                             }) {
+                            Icon(Icons.Rounded.Bookmark, contentDescription = "Localized description",   tint = Color.White,)
                             Text("save to my list")
                         }
                     }
