@@ -193,7 +193,17 @@ if(mylistdata!=null){
                             .padding(16.dp)
                             .fillMaxWidth()
                             .align(Alignment.CenterVertically)) {
-                        Text(text = favoritelist.get(it).time+ " | "+ favoritelist.get(it).level)
+
+                        Row(){
+                            Icon(Icons.Rounded.Update, contentDescription = "",   tint = Color.Black)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = favoritelist.get(it).time+  "   | ")
+                            Spacer(modifier = Modifier.width(3.dp))
+                            Icon(Icons.Rounded.TrendingUp, contentDescription = "",   tint = Color.Black)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = favoritelist.get(it).level)
+                        }
+
                         Spacer(modifier = Modifier.padding(5.dp))
                         Row() {
                                     if(favoritelist.get(it).isBlueV =="true") {
@@ -275,7 +285,15 @@ if(mylistdata!=null){
                             .padding(16.dp)
                             .fillMaxWidth()
                             .align(Alignment.CenterVertically)) {
-                        Text(text = otherlist.get(it).time+ " | "+ otherlist.get(it).level)
+                        Row(){
+                            Icon(Icons.Rounded.Update, contentDescription = "",   tint = Color.Black)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = otherlist.get(it).time+  "   | ")
+                            Spacer(modifier = Modifier.width(3.dp))
+                            Icon(Icons.Rounded.TrendingUp, contentDescription = "",   tint = Color.Black)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = otherlist.get(it).level)
+                        }
                         Spacer(modifier = Modifier.padding(5.dp))
                         Row() {
                             if(otherlist.get(it).isBlueV =="true") {
