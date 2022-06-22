@@ -11,6 +11,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Bookmark
+import androidx.compose.material.icons.rounded.TrendingUp
+import androidx.compose.material.icons.rounded.Update
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,14 +75,32 @@ fun RecipeScreen(recipe: RecipeUser){
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                         horizontalAlignment = Alignment.Start
                     ) {
-                        Text(
-                            text = recipe.level
-                        )
 
-                        Text(
-                            text = recipe.time
-                        )
-                        Spacer(modifier = Modifier.size(25.dp))
+                        Row() {
+                            Icon(
+                                Icons.Rounded.TrendingUp,
+                                contentDescription = "",
+                                tint = Color.Black
+                            )
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Text(
+
+                                text = recipe.level
+                            )
+                        }
+
+                        Row() {
+                            Icon(
+                                Icons.Rounded.Update,
+                                contentDescription = "",
+                                tint = Color.Black
+                            )
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Text(
+                                text = recipe.time
+                            )
+                        }
+                        Spacer(modifier = Modifier.size(15.dp))
                         Text(
                             text= "Ingredients:",
                             fontWeight = FontWeight.Bold,
@@ -90,7 +110,7 @@ fun RecipeScreen(recipe: RecipeUser){
                         Text(
                             text = recipe.ingredients
                         )
-                        Spacer(modifier = Modifier.size(25.dp))
+                        Spacer(modifier = Modifier.size(15.dp))
                         Text(
                             text= "Instruction:",
                             fontWeight = FontWeight.Bold,
@@ -101,7 +121,7 @@ fun RecipeScreen(recipe: RecipeUser){
                             text = recipe.instruction
                         )
 
-                        Spacer(modifier = Modifier.size(25.dp))
+                        Spacer(modifier = Modifier.size(15.dp))
 
                         Row() {
 
@@ -142,26 +162,36 @@ fun RecipeScreen(recipe: RecipeUser){
                             text = spon
                         )
 
-                        if (recipe.creatorMail == LoginUser.loginEmail) {
-                            Button(
-                                modifier = Modifier.padding(top = 16.dp),
-                                onClick = {
-                                    delete(recipe, context)
-                                }) {
-                                Text("delete")
-                            }
-                        } else {
-                            Button(
-                                modifier = Modifier.padding(top = 16.dp),
-                                onClick = {
-                                    saveToMyList(recipe, context)
-                                }) {
-                                Icon(
-                                    Icons.Rounded.Bookmark,
-                                    contentDescription = "Localized description",
-                                    tint = Color.White,
-                                )
-                                Text("save to my list")
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+
+                            if (recipe.creatorMail == LoginUser.loginEmail) {
+                                Button(
+                                    modifier = Modifier.padding(top = 16.dp),
+                                    onClick = {
+                                        delete(recipe, context)
+                                    }) {
+                                    Text("delete")
+                                }
+                            } else {
+                                Button(
+                                    modifier = Modifier.padding(top = 16.dp),
+                                    onClick = {
+                                        saveToMyList(recipe, context)
+                                    }) {
+                                    Icon(
+                                        Icons.Rounded.Bookmark,
+                                        contentDescription = "Localized description",
+                                        tint = Color.White,
+                                    )
+                                    Text("save to my list")
+                                }
                             }
                         }
                     }
