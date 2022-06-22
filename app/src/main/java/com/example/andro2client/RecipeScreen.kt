@@ -24,7 +24,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.ImagePainter
+import coil.compose.rememberImagePainter
 import com.example.andro2client.*
+import com.example.andro2client.R
 import com.example.andro2client.compositeDisposable
 import com.example.andro2client.model.LoginUser
 import com.example.andro2client.model.Recipe
@@ -38,7 +41,7 @@ fun RecipeScreen(recipe: RecipeUser){
     val context = LocalContext.current
     var spon =""
     if (recipe.sponsored=="true"){
-        spon = "This is a sponsored recipe"
+        spon = "* This is a sponsored recipe"
     }
     Column(modifier = Modifier.fillMaxSize()) {
         BoxWithConstraints() {
@@ -47,16 +50,20 @@ fun RecipeScreen(recipe: RecipeUser){
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                            .padding(1.dp),
+                        verticalArrangement = Arrangement.spacedBy(1.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        ImageLoader(recipe.imageRec)
+
                         Text(
-                            text = recipe.name,
+                            text = recipe.name+ " (" + recipe.foodType+ ")",
                             fontWeight = FontWeight.Bold,
-                            fontSize = 30.sp
+                            fontSize = 25.sp
 
                         )
+
+
                     }
 
                     Column(
@@ -73,26 +80,66 @@ fun RecipeScreen(recipe: RecipeUser){
                         Text(
                             text = recipe.time
                         )
+                        Spacer(modifier = Modifier.size(25.dp))
                         Text(
-                            text = recipe.foodType
+                            text= "Ingredients:",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp
                         )
-
-                        Text(
-                            text = recipe.creatorMail
-                        )
-
 
                         Text(
                             text = recipe.ingredients
+                        )
+                        Spacer(modifier = Modifier.size(25.dp))
+                        Text(
+                            text= "Instruction:",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp
                         )
 
                         Text(
                             text = recipe.instruction
                         )
 
+                        Spacer(modifier = Modifier.size(25.dp))
+
+                        Row() {
+
+                            if (recipe.isBlueV == "true") {
+                                Box(
+                                    modifier = Modifier
+                                        .height(25.dp)
+                                        .width(25.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+
+                                    val painter1 = rememberImagePainter(
+                                        data = "https://firebasestorage.googleapis.com/v0/b/andro2client.appspot.com/o/app%2Ftwitter600.jpg?alt=media&token=95fd022b-62ee-4925-be05-2f4507450da0",
+                                        builder = {
+                                            error(R.drawable.error2)
+                                        }
+                                    )
+                                    val printState = painter1.state
+                                    Image(
+
+                                        painter = painter1,
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                    if (printState is ImagePainter.State.Loading) {
+                                        CircularProgressIndicator()
+                                    }
+                                }
+                            }
+
+                            Text(
+                                text = "By " + recipe.creatorMail
+                            )
+                        }
                         Text(
 
-                            text = recipe.sponsored
+                            text = spon
                         )
 
                         if (recipe.creatorMail == LoginUser.loginEmail) {
