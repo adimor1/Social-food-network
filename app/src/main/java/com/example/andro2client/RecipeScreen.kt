@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.andro2client.*
 import com.example.andro2client.compositeDisposable
 import com.example.andro2client.model.LoginUser
@@ -35,37 +36,86 @@ import io.reactivex.schedulers.Schedulers
 fun RecipeScreen(recipe: RecipeUser){
     val scrollState = rememberScrollState()
     val context = LocalContext.current
+    var spon =""
+    if (recipe.sponsored=="true"){
+        spon = "This is a sponsored recipe"
+    }
     Column(modifier = Modifier.fillMaxSize()) {
         BoxWithConstraints() {
             Surface() {
-                Column(
-                    modifier= Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = recipe.level
-                    )
+                Column() {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = recipe.name,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 30.sp
 
-                    if(recipe.creatorMail==LoginUser.loginEmail){
-                        Button(
-                            modifier = Modifier.padding(top = 16.dp),
-                            onClick = {
-                                delete(recipe, context)
-                            }) {
-                            Text("delete")
-                        }
+                        )
                     }
-                    else{
-                        Button(
-                            modifier = Modifier.padding(top = 16.dp),
-                            onClick = {
-                                saveToMyList(recipe, context)
-                            }) {
-                            Icon(Icons.Rounded.Bookmark, contentDescription = "Localized description",   tint = Color.White,)
-                            Text("save to my list")
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            text = recipe.level
+                        )
+
+                        Text(
+                            text = recipe.time
+                        )
+                        Text(
+                            text = recipe.foodType
+                        )
+
+                        Text(
+                            text = recipe.creatorMail
+                        )
+
+
+                        Text(
+                            text = recipe.ingredients
+                        )
+
+                        Text(
+                            text = recipe.instruction
+                        )
+
+                        Text(
+
+                            text = recipe.sponsored
+                        )
+
+                        if (recipe.creatorMail == LoginUser.loginEmail) {
+                            Button(
+                                modifier = Modifier.padding(top = 16.dp),
+                                onClick = {
+                                    delete(recipe, context)
+                                }) {
+                                Text("delete")
+                            }
+                        } else {
+                            Button(
+                                modifier = Modifier.padding(top = 16.dp),
+                                onClick = {
+                                    saveToMyList(recipe, context)
+                                }) {
+                                Icon(
+                                    Icons.Rounded.Bookmark,
+                                    contentDescription = "Localized description",
+                                    tint = Color.White,
+                                )
+                                Text("save to my list")
+                            }
                         }
                     }
                 }

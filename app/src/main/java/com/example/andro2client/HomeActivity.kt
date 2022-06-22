@@ -22,6 +22,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
@@ -198,6 +199,9 @@ if(mylistdata!=null){
                             .fillMaxWidth()
                             .align(Alignment.CenterVertically)) {
 
+                        Text(text = " " + favoritelist.get(it).name, fontWeight =FontWeight.Bold, fontSize = 20.sp)
+                        Spacer(modifier = Modifier.padding(2.dp))
+
                         Row(){
                             Icon(Icons.Rounded.Update, contentDescription = "",   tint = Color.Black)
                             Spacer(modifier = Modifier.width(4.dp))
@@ -208,7 +212,7 @@ if(mylistdata!=null){
                             Text(text = favoritelist.get(it).level)
                         }
 
-                        Spacer(modifier = Modifier.padding(5.dp))
+                        Spacer(modifier = Modifier.padding(2.dp))
                         Row() {
                                     if(favoritelist.get(it).isBlueV =="true") {
                                         Box(
@@ -289,6 +293,9 @@ if(mylistdata!=null){
                             .padding(16.dp)
                             .fillMaxWidth()
                             .align(Alignment.CenterVertically)) {
+                        Text(text = " " + otherlist.get(it).name, fontWeight =FontWeight.Bold, fontSize = 20.sp)
+                        Spacer(modifier = Modifier.padding(2.dp))
+
                         Row(){
                             Icon(Icons.Rounded.Update, contentDescription = "",   tint = Color.Black)
                             Spacer(modifier = Modifier.width(4.dp))
@@ -298,7 +305,7 @@ if(mylistdata!=null){
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(text = otherlist.get(it).level)
                         }
-                        Spacer(modifier = Modifier.padding(5.dp))
+                        Spacer(modifier = Modifier.padding(2.dp))
                         Row() {
                             if(otherlist.get(it).isBlueV =="true") {
                                 Box(
