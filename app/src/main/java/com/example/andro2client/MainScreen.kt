@@ -1,4 +1,5 @@
 package com.example.andro2client.ui.theme
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -13,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.andro2client.BottomBarScreen
 import com.example.andro2client.BottomNavGraph
 
+@ExperimentalFoundationApi
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
