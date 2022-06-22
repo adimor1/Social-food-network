@@ -35,10 +35,7 @@ fun BookScreenView(modifier: Modifier = Modifier) {
 
     val listdatastate= MyRecipeList()
     val listdatastate2= MySavedList()
-     var joinedList = ArrayList<Recipe>()
 
-    listdatastate?.let { joinedList.addAll(it) };
-    listdatastate2?.let { joinedList.addAll(it) }
     bookView(listdatastate, listdatastate2)
 }
 
@@ -140,7 +137,6 @@ fun bookView(listdata: ArrayList<Recipe>?, listdata2: ArrayList<Recipe>?){
                             .height(50.dp), Alignment.Center, ){
                         Row(){
                             Icon(Icons.Rounded.List, contentDescription = "Localized description",   tint = Color.White,)
-                            Spacer(modifier = Modifier.size(10.dp))
                             Text(text = "Your Recipes", fontWeight = FontWeight.Bold, color = Color.White)
                         }
                     }
@@ -173,11 +169,12 @@ fun bookView(listdata: ArrayList<Recipe>?, listdata2: ArrayList<Recipe>?){
                         )
                     }
                 }
-                Spacer(modifier = Modifier.size(50.dp))
+
             }
 
 
             stickyHeader {
+                Spacer(modifier = Modifier.size(50.dp))
                 Card(elevation = 4.dp,  backgroundColor =  Color(0xFF302E2E)) {
 
                     Box(
