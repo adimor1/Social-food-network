@@ -108,6 +108,10 @@ private fun RecipeList(): ArrayList<RecipeUser>? {
                     json_objectdetail.getString("foodType"),
                     json_objectdetail.getString("creatorEmail"),
                     json_objectdetail.getString("imageRec"),
+                    json_objectdetail.getString("name"),
+                    json_objectdetail.getString("ingredients"),
+                    json_objectdetail.getString("instruction"),
+                    json_objectdetail.getString("sponsored"),
                     bluev.getString("isBlueV")
                 );
 
@@ -151,7 +155,7 @@ if(mylistdata!=null){
     
     LazyColumn {
         stickyHeader {
-            Spacer(modifier = Modifier.size(50.dp))
+
             Card(elevation = 4.dp,  backgroundColor =  Color(0xFF302E2E)) {
 
                 Box(

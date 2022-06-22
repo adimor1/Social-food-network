@@ -28,6 +28,10 @@ interface MyService {
                   @Field("foodType") foodType:String,
                   @Field("creatorEmail") creatorEmail:String,
                   @Field("imageRec") imageRec:String,
+                  @Field("name") name:String,
+                  @Field("ingredients") ingredients:String,
+                  @Field("instruction") instruction:String,
+                  @Field("sponsored") sponsored:Boolean,
     ): Observable<String>
 
 

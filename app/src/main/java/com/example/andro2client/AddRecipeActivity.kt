@@ -96,6 +96,8 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
     val timeState = remember { mutableStateOf("") }
     val typeState = remember { mutableStateOf("") }
 
+    val isChecked = remember { mutableStateOf(false) }
+
     val context = LocalContext.current
     val myImage: Bitmap = BitmapFactory.decodeResource(
         Resources.getSystem(),
@@ -255,7 +257,7 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
 
         //***type selector***//
         var mExpanded by remember { mutableStateOf(false) }
-        val mCities =
+        val favorite=
             listOf("Italian", "Asian", "Japanese", "Mediterranean", "Dessert", "Mexican", "Indian")
         var mSelectedText by remember { mutableStateOf("") }
         var mTextFieldSize by remember { mutableStateOf(Size.Zero) }
@@ -285,7 +287,7 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .width(with(LocalDensity.current) { mTextFieldSize.width.toDp() })
             ) {
-                mCities.forEach { label ->
+                favorite.forEach { label ->
                     DropdownMenuItem(onClick = {
                         mSelectedText = label
                         mExpanded = false
@@ -330,7 +332,7 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
             }
             Spacer(modifier = Modifier.width(110.dp))
             Row() {
-                val isChecked = remember { mutableStateOf(false) }
+
                 Checkbox(checked = isChecked.value,
                     onCheckedChange = { isChecked.value = it },
                     colors = CheckboxDefaults.colors(Color.DarkGray))
@@ -366,6 +368,7 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
             }
             Spacer(modifier = Modifier.width(150.dp))
             Button(
+
                 onClick = {
                     addRecipe(
                         levelState.value,
@@ -373,7 +376,11 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
                         typeState.value,
                         mSelectedText,
                         context,
-                        imageUrl
+                        imageUrl,
+                        nameState.value,
+                        IngredientsState.value,
+                        InstructionsState.value,
+                        isChecked.value,
                     )
                 }) {
                 Text("Save")
@@ -382,6 +389,8 @@ fun AddRecipeView(modifier: Modifier = Modifier) {
     }
     }
 
+
+
 fun getImageUriFromBitmap(context: Context, bitmap: Bitmap): Uri{
     val bytes = ByteArrayOutputStream()
     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
@@ -389,7 +398,8 @@ fun getImageUriFromBitmap(context: Context, bitmap: Bitmap): Uri{
     return Uri.parse(path.toString())
 }
 
-fun addRecipe(level: String, time:String, type:String, foodtype: String, context: Context, imageUrl: Uri?) {
+fun addRecipe(level: String, time:String, type:String, foodtype: String, context: Context, imageUrl: Uri?, name:String,
+ingredients:String, instruction:String, sponsored:Boolean) {
 
 
     if(!(foodtype=="Italian" ||foodtype=="Asian"||foodtype=="Japanese"||foodtype=="Mediterranean"|| foodtype=="Dessert"||foodtype=="Mexican"||foodtype=="Indian")){
@@ -414,10 +424,27 @@ fun addRecipe(level: String, time:String, type:String, foodtype: String, context
         Toast.makeText(context, "time can not be null or empty", Toast.LENGTH_SHORT).show()
         return;
     }
+    if(TextUtils.isEmpty(name))
+    {
+        Toast.makeText(context, "name can not be null or empty", Toast.LENGTH_SHORT).show()
+        return;
+    }
+    if(TextUtils.isEmpty(ingredients))
+    {
+        Toast.makeText(context, "ingredients can not be null or empty", Toast.LENGTH_SHORT).show()
+        return;
+    }
+    if(TextUtils.isEmpty(instruction))
+    {
+        Toast.makeText(context, "instruction can not be null or empty", Toast.LENGTH_SHORT).show()
+        return;
+    }
 
     val imageRec = Random.nextInt(0, 100000)
 
-    compositeDisposable.add(myService.addRecipe(level, time, type, foodtype, LoginUser.loginEmail, imageRec.toString())
+    compositeDisposable.add(myService.addRecipe(level, time, type, foodtype, LoginUser.loginEmail, imageRec.toString(),
+        name, ingredients, instruction, sponsored
+    )
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->
