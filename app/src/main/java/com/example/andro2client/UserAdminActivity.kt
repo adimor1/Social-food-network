@@ -105,7 +105,7 @@ fun UserView(mylistdata: ArrayList<User>?){
                 {
                     Row(
                         Modifier.clickable {
-                            val intent = Intent(context, UserAdminActivity::class.java)
+                            val intent = Intent(context, ProfileAdminActivity::class.java)
                             intent.putExtra("USER_ID", mylistdata.get(it))
                             context.startActivity(intent)
                         }

@@ -46,6 +46,9 @@
         <activity
             android:name=".UserAdminActivity"
             android:exported="false" />
+        <activity
+            android:name=".ProfileAdminActivity"
+            android:exported="false" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
