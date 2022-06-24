@@ -80,4 +80,7 @@ interface MyService {
                  @Field("ingredients") ingredients: String,
                  @Field("instructions") instructions:String,
                  @Field("type") type: String):Observable<String>
+
+    @GET ("getUsers")
+    fun getUsers():Observable<String>
 }

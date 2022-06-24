@@ -49,6 +49,16 @@ fun AdminHomeView(){
     Button(
         modifier = Modifier.padding(top = 16.dp),
         onClick = {
+
+            context.startActivity(Intent(context, UserAdminActivity::class.java))
+
+        }) {
+        Text("Manage Users")
+    }
+
+    Button(
+        modifier = Modifier.padding(top = 16.dp),
+        onClick = {
             deleteDBM(context)
             context.startActivity(Intent(context, MainActivity::class.java))
 
