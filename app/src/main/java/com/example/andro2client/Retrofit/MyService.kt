@@ -70,4 +70,14 @@ interface MyService {
 
     @GET ("getrecipeuser")
     fun getrecipeuser():Observable<String>
+
+
+    @FormUrlEncoded
+    @HTTP(method = "PUT", path = "editRecipe", hasBody = true)
+    fun editRecipe(@Field("id") id: String,
+                 @Field("level") level:String,
+                 @Field("time") time:String,
+                 @Field("ingredients") ingredients: String,
+                 @Field("instructions") instructions:String,
+                 @Field("type") type: String):Observable<String>
 }

@@ -21,12 +21,6 @@ sealed class BottomBarScreen(
         icon = Icons.Default.Person
     )
 
-    object Search : BottomBarScreen(
-        route = "search",
-        title = "Search",
-        icon = Icons.Default.Search
-    )
-
     object Add : BottomBarScreen(
         route = "add",
         title = "Add",
