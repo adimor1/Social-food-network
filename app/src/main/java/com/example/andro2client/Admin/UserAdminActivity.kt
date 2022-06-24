@@ -74,6 +74,7 @@ private fun UserList(): ArrayList<User>? {
                     json_objectdetail.getString("type"),
                     json_objectdetail.getString("gender"),
                     json_objectdetail.getString("isBlueV"),
+                    json_objectdetail.getString("isAdmin"),
                 );
                 mylistdata.add(model)
             }

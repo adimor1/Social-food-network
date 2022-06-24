@@ -66,7 +66,8 @@ private fun ProfileDetails() :User?{
                 objectAnswer.getString("birth"),
                 objectAnswer.getString("type"),
                 objectAnswer.getString("gender"),
-                objectAnswer.getString("isBlueV")
+                objectAnswer.getString("isBlueV"),
+                objectAnswer.getString("isAdmin")
                 );
         }
 

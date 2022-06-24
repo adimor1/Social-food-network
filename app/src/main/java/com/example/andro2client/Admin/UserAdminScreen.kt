@@ -49,8 +49,17 @@ fun UserScreen(user: User){
         val nameSate = remember { mutableStateOf(username) }
         val birthSate = remember { mutableStateOf(user.birth) }
         val isBlueVState = remember { mutableStateOf(user.isBlueV) }
-        val isAdmin = remember { mutableStateOf(false) }
-        val isBlueVCheckState = remember { mutableStateOf(false) }
+        var blueV:Boolean = false
+        var admin:Boolean = false
+
+        if(user.isBlueV=="true"){
+            blueV = true
+        }
+        if(user.isAdmin=="true"){
+            admin = true
+        }
+        val isAdmin = remember { mutableStateOf(admin) }
+        val isBlueVCheckState = remember { mutableStateOf(blueV) }
 
 
         Column(
@@ -334,7 +343,7 @@ fun editUserByAdmin(user: User, context:Context, name:String, birth:String, favo
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->
-
+            context.startActivity(Intent(context, UserAdminActivity::class.java))
         }
     )
 }
