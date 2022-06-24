@@ -87,7 +87,7 @@ fun RecipeScreen(recipe: RecipeUser){
                         horizontalAlignment = Alignment.Start
                     ) {
 
-                        if(recipe.creatorMail != LoginUser.loginEmail) {
+                        if(recipe.creatorMail != LoginUser.loginEmail && LoginUser.isAdmin!="true") {
 
                             Row() {
                                 Icon(
@@ -298,7 +298,7 @@ fun RecipeScreen(recipe: RecipeUser){
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
 
-                            if (recipe.creatorMail == LoginUser.loginEmail) {
+                            if (recipe.creatorMail == LoginUser.loginEmail || LoginUser.isAdmin=="true") {
 
                                 Row() {
 

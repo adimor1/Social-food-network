@@ -42,10 +42,12 @@ import coil.compose.rememberImagePainter
 import com.example.andro2client.Retrofit.MyService
 import com.example.andro2client.Retrofit.RetrofitClient
 import com.example.andro2client.model.LoginUser
+import com.example.andro2client.model.User
 import com.example.andro2client.ui.theme.Andro2ClientTheme
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import org.json.JSONArray
 import org.json.JSONObject
 
 lateinit var myService: MyService
@@ -69,8 +71,17 @@ class MainActivity : ComponentActivity() {
         dbManager.open();
         val userName:String = dbManager.userexit( )
         if(userName!=""){
-        LoginUser.loginEmail = userName
-            this.startActivity(Intent(this, HomeActivity::class.java))
+            if( userName.contains("Admin"))
+            {
+                LoginUser.loginEmail = userName.split("-").get(0)
+                LoginUser.isAdmin="true"
+                this.startActivity(Intent(this, AdminHomeActivity::class.java))
+            }
+            else {
+                LoginUser.loginEmail = userName
+                LoginUser.isAdmin="false"
+                this.startActivity(Intent(this, HomeActivity::class.java))
+            }
         }
         dbManager.close()
 
@@ -80,8 +91,6 @@ class MainActivity : ComponentActivity() {
                 Surface(color = MaterialTheme.colors.background) {
                     LoginView()
                }
-
-
             }
         }
 
@@ -89,7 +98,11 @@ class MainActivity : ComponentActivity() {
         myService = retrofit.create(MyService::class.java)
 
     }
+
+
 }
+
+
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -249,17 +262,23 @@ fun loginUser(userName: String, password: String, context: Context) {
 
                 if(isAdmin == "true"){
                     context.startActivity(Intent(context, AdminHomeActivity::class.java))
+                    LoginUser.isAdmin = "true"
                 }
                 else{
                     context.startActivity(Intent(context, HomeActivity::class.java))
+                    LoginUser.isAdmin="false"
                 }
-
                 LoginUser.loginEmail = userName
 
                 val dbManager: DBManager
                 dbManager =  DBManager(context);
                 dbManager.open();
-                dbManager.Sighningup(0, userName, password)
+                if(isAdmin=="true"){
+                    dbManager.Sighningup(0, userName+"-Admin", password)
+                }
+                else{
+                    dbManager.Sighningup(0, userName, password)
+                }
                 dbManager.close()
 
             }

@@ -9,4 +9,11 @@ object LoginUser {
         set(value) {
             field = value
         }
+    var isAdmin: String = "false"
+        get() {
+            return field
+        }
+        set(value) {
+            field = value
+        }
 }
