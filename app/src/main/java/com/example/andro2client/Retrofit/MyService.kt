@@ -87,4 +87,16 @@ interface MyService {
     @FormUrlEncoded
     @HTTP(method = "DELETE", path = "deleteUser", hasBody = true)
     fun deleteUser(@Field("id") id: String):Observable<String>
+
+    @FormUrlEncoded
+    @HTTP(method = "PUT", path = "editUserByAdmin", hasBody = true)
+    fun editUserByAdmin(@Field("id") id: String,
+                 @Field("name") name:String,
+                 @Field("birth") birth:String,
+                 @Field("favorite") favorite: String,
+                 @Field("type") type:String,
+                 @Field("gender") gender: String,
+                 @Field("isBlueV") isBlueV:String,
+                 @Field("isAdmin") isAdmin: String,
+                        ):Observable<String>
 }

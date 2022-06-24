@@ -49,6 +49,8 @@ fun UserScreen(user: User){
         val nameSate = remember { mutableStateOf(username) }
         val birthSate = remember { mutableStateOf(user.birth) }
         val isBlueVState = remember { mutableStateOf(user.isBlueV) }
+        val isAdmin = remember { mutableStateOf(false) }
+        val isBlueVCheckState = remember { mutableStateOf(false) }
 
 
         Column(
@@ -61,7 +63,7 @@ fun UserScreen(user: User){
 
             Row() {
 
-                if(isBlueVState.value=="true") {
+                if (isBlueVState.value == "true") {
                     Box(
                         modifier = Modifier
                             .height(40.dp)
@@ -139,10 +141,18 @@ fun UserScreen(user: User){
                 )
             )
 
-            val favorit = listOf("Italian", "Asian", "Japanese", "Mediterranean", "Dessert", "Mexican", "Indian")
+            val favorit = listOf(
+                "Italian",
+                "Asian",
+                "Japanese",
+                "Mediterranean",
+                "Dessert",
+                "Mexican",
+                "Indian"
+            )
             var mExpanded by remember { mutableStateOf(false) }
             var mSelectedText by remember { mutableStateOf(user.favorite) }
-            var mTextFieldSize by remember { mutableStateOf(Size.Zero)}
+            var mTextFieldSize by remember { mutableStateOf(Size.Zero) }
             val icon = if (mExpanded)
                 Icons.Filled.KeyboardArrowUp
             else
@@ -157,9 +167,9 @@ fun UserScreen(user: User){
                     .onGloballyPositioned { coordinates ->
                         mTextFieldSize = coordinates.size.toSize()
                     },
-                label = {Text("Favorite food")},
+                label = { Text("Favorite food") },
                 trailingIcon = {
-                    Icon(icon,"contentDescription",
+                    Icon(icon, "contentDescription",
                         Modifier.clickable { mExpanded = !mExpanded })
                 }
             )
@@ -168,7 +178,7 @@ fun UserScreen(user: User){
                 expanded = mExpanded,
                 onDismissRequest = { mExpanded = false },
                 modifier = Modifier
-                    .width(with(LocalDensity.current){mTextFieldSize.width.toDp()})
+                    .width(with(LocalDensity.current) { mTextFieldSize.width.toDp() })
             ) {
                 favorit.forEach { label ->
                     DropdownMenuItem(onClick = {
@@ -180,10 +190,11 @@ fun UserScreen(user: User){
                 }
             }
 
-            val type = listOf("Private", "Blogger", "Cooker", "Chef",  "Workshop editor", "Food critic")
+            val type =
+                listOf("Private", "Blogger", "Cooker", "Chef", "Workshop editor", "Food critic")
             var mExpandedType by remember { mutableStateOf(false) }
             var mSelectedTextType by remember { mutableStateOf(user.type) }
-            var mTextFieldSizeType by remember { mutableStateOf(Size.Zero)}
+            var mTextFieldSizeType by remember { mutableStateOf(Size.Zero) }
             val iconType = if (mExpandedType)
                 Icons.Filled.KeyboardArrowUp
             else
@@ -198,9 +209,9 @@ fun UserScreen(user: User){
                     .onGloballyPositioned { coordinates ->
                         mTextFieldSizeType = coordinates.size.toSize()
                     },
-                label = {Text("User Type")},
+                label = { Text("User Type") },
                 trailingIcon = {
-                    Icon(iconType,"contentDescription",
+                    Icon(iconType, "contentDescription",
                         Modifier.clickable { mExpandedType = !mExpandedType })
                 }
             )
@@ -209,7 +220,7 @@ fun UserScreen(user: User){
                 expanded = mExpandedType,
                 onDismissRequest = { mExpandedType = false },
                 modifier = Modifier
-                    .width(with(LocalDensity.current){mTextFieldSizeType.width.toDp()})
+                    .width(with(LocalDensity.current) { mTextFieldSizeType.width.toDp() })
             ) {
                 type.forEach { label ->
                     DropdownMenuItem(onClick = {
@@ -225,16 +236,16 @@ fun UserScreen(user: User){
             val genderState = remember { mutableStateOf(user.gender) }
             Row {
                 RadioButton(
-                    selected = genderState.value=="Female",
-                    onClick = { genderState.value="Female" },
+                    selected = genderState.value == "Female",
+                    onClick = { genderState.value = "Female" },
                     colors = RadioButtonDefaults.colors(Color.Gray)
                 )
                 Spacer(modifier = Modifier.size(16.dp))
                 Text(text = "Female")
                 Spacer(modifier = Modifier.size(16.dp))
                 RadioButton(
-                    selected = genderState.value=="Male",
-                    onClick = { genderState.value="Male" },
+                    selected = genderState.value == "Male",
+                    onClick = { genderState.value = "Male" },
                     colors = RadioButtonDefaults.colors(Color.Gray)
                 )
                 Spacer(modifier = Modifier.size(16.dp))
@@ -242,10 +253,48 @@ fun UserScreen(user: User){
             }
 
 
+            Spacer(modifier = Modifier.width(20.dp))
+
+
+            Row() {
+
+                Row() {
+
+                    Checkbox(
+                        checked = isAdmin.value,
+                        onCheckedChange = { isAdmin.value = it },
+                        colors = CheckboxDefaults.colors(Color.DarkGray)
+                    )
+                    Spacer(modifier = Modifier.size(5.dp))
+                    Text(text = "Admin")
+                }
+
+                Spacer(modifier = Modifier.width(20.dp))
+                Row() {
+
+                    Checkbox(
+                        checked = isBlueVCheckState.value,
+                        onCheckedChange = { isBlueVCheckState.value = it },
+                        colors = CheckboxDefaults.colors(Color.DarkGray)
+                    )
+                    Spacer(modifier = Modifier.size(5.dp))
+                    Text(text = "Blue V")
+                }
+            }
+
+
             Button(
                 modifier = Modifier.padding(top = 16.dp),
                 onClick = {
-                    editUser(user, context, nameSate.value, birthSate.value, mSelectedText,mSelectedTextType ,genderState.value)
+                    editUserByAdmin(user,
+                        context,
+                        nameSate.value,
+                        birthSate.value,
+                        mSelectedText,
+                        mSelectedTextType ,
+                        genderState.value,
+                    isBlueVCheckState.value,
+                    isAdmin.value)
                 }) {
                 Text("Update")
             }
@@ -257,11 +306,8 @@ fun UserScreen(user: User){
                 }) {
                 Text("Delete")
             }
-
-        }
-
-
     }
+        }
 }
 
 fun deleteUser(user: User, context: Context) {
@@ -270,6 +316,25 @@ fun deleteUser(user: User, context: Context) {
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->
             context.startActivity(Intent(context, UserAdminActivity::class.java))
+        }
+    )
+}
+
+fun editUserByAdmin(user: User, context:Context, name:String, birth:String, favorite:String, type:String, gender:String, blueV:Boolean, admin:Boolean) {
+
+    var isAdmin="false"
+    var isBlueV="false"
+    if(blueV){
+        isBlueV="true"
+    }
+    if(admin){
+        isAdmin="true"
+    }
+    compositeDisposable.add(myService.editUserByAdmin(user.id, name, birth, favorite, type, gender, isBlueV, isAdmin)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { result ->
+
         }
     )
 }
