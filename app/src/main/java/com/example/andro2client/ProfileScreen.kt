@@ -11,6 +11,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.rounded.Logout
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -287,14 +288,23 @@ fun ProfileView(user: User?){
                 }) {
                 Text("Update")
             }
-
+            Spacer(modifier = Modifier.size(50.dp))
             Button(
                 modifier = Modifier.padding(top = 16.dp),
                 onClick = {
                     deleteDBM(context)
                     context.startActivity(Intent(context, MainActivity::class.java))
 
-                }) {
+                },
+                 colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.DarkGray,
+                    contentColor = Color.White)
+            ) {
+                Icon(
+                    Icons.Rounded.Logout,
+                    contentDescription = "Localized description",
+                    tint = Color.White,
+                )
                 Text("logout")
             }
         }

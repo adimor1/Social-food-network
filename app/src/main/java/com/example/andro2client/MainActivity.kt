@@ -27,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -228,8 +229,11 @@ fun LoginView(modifier: Modifier = Modifier) {
             //enabled = usernameSate.value.isNotEmpty() && passwordSate.value.isNotEmpty(),
             onClick = {
                 context.startActivity(Intent(context, RegisterActivity::class.java))
-            }) {
-            Text("don't have an account?")
+            }, colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color.DarkGray,
+                contentColor = Color.White)
+        ) {
+            Text("Don't have an account? Sign up")
         }
 
     }
@@ -253,7 +257,7 @@ fun loginUser(userName: String, password: String, context: Context) {
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->
-            Toast.makeText(context, ""+result, Toast.LENGTH_SHORT).show()
+
 
             if(result!="\"Email not exist\"" && result!="\"Worng password\""){
 
@@ -281,6 +285,9 @@ fun loginUser(userName: String, password: String, context: Context) {
                 }
                 dbManager.close()
 
+            }
+            else{
+                Toast.makeText(context, ""+result, Toast.LENGTH_SHORT).show()
             }
         }
     )
