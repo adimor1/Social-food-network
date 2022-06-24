@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
+import com.example.andro2client.model.RecipeUser
 
 @ExperimentalFoundationApi
 @OptIn(ExperimentalComposeUiApi::class)
@@ -42,10 +43,10 @@ fun BookScreenView(modifier: Modifier = Modifier) {
 
 
 @Composable
-private fun MyRecipeList(): ArrayList<Recipe>? {
-    val listdata = ArrayList<Recipe>()
+private fun MyRecipeList(): ArrayList<RecipeUser>? {
+    val listdata = ArrayList<RecipeUser>()
     val listdatastate = remember {
-        mutableStateOf<ArrayList<Recipe>?>(null)
+        mutableStateOf<ArrayList<RecipeUser>?>(null)
     }
 
     compositeDisposable.add(myService.getMyRecipe(LoginUser.loginEmail)
@@ -57,7 +58,9 @@ private fun MyRecipeList(): ArrayList<Recipe>? {
 
             for (i in 0 until answer.length()) {
                 var json_objectdetail: JSONObject =answer.getJSONObject(i)
-                var model:Recipe= Recipe(
+               // val userrecipe: JSONArray = json_objectdetail.getJSONArray("userrecipe")
+               // val bluev: JSONObject =userrecipe.getJSONObject(0)
+                var model:RecipeUser= RecipeUser(
                     json_objectdetail.getString("_id"),
                     json_objectdetail.getString("time"),
                     json_objectdetail.getString("level"),
@@ -65,6 +68,11 @@ private fun MyRecipeList(): ArrayList<Recipe>? {
                     json_objectdetail.getString("foodType"),
                     json_objectdetail.getString("creatorEmail"),
                     json_objectdetail.getString("imageRec"),
+                    json_objectdetail.getString("name"),
+                    json_objectdetail.getString("ingredients"),
+                    json_objectdetail.getString("instruction"),
+                    json_objectdetail.getString("sponsored"),
+                   ""
                 );
                 listdata.add(model)
             }
@@ -81,10 +89,10 @@ private fun MyRecipeList(): ArrayList<Recipe>? {
 
 
 @Composable
-private fun MySavedList(): ArrayList<Recipe>? {
-    val listdata2 = ArrayList<Recipe>()
+private fun MySavedList(): ArrayList<RecipeUser>? {
+    val listdata2 = ArrayList<RecipeUser>()
     val listdatastate2 = remember {
-        mutableStateOf<ArrayList<Recipe>?>(null)
+        mutableStateOf<ArrayList<RecipeUser>?>(null)
     }
 
     compositeDisposable.add(myService.getRecipeById(LoginUser.loginEmail)
@@ -96,7 +104,9 @@ private fun MySavedList(): ArrayList<Recipe>? {
 
             for (i in 0 until answer.length()) {
                 var json_objectdetail: JSONObject =answer.getJSONObject(i)
-                var model:Recipe= Recipe(
+               // val userrecipe: JSONArray = json_objectdetail.getJSONArray("userrecipe")
+              //  val bluev: JSONObject =userrecipe.getJSONObject(0)
+                var model:RecipeUser= RecipeUser(
                     json_objectdetail.getString("_id"),
                     json_objectdetail.getString("time"),
                     json_objectdetail.getString("level"),
@@ -104,6 +114,11 @@ private fun MySavedList(): ArrayList<Recipe>? {
                     json_objectdetail.getString("foodType"),
                     json_objectdetail.getString("creatorEmail"),
                     json_objectdetail.getString("imageRec"),
+                    json_objectdetail.getString("name"),
+                    json_objectdetail.getString("ingredients"),
+                    json_objectdetail.getString("instruction"),
+                    json_objectdetail.getString("sponsored"),
+                  ""
                 );
                 listdata2.add(model)
             }
@@ -117,7 +132,7 @@ private fun MySavedList(): ArrayList<Recipe>? {
 
 @ExperimentalFoundationApi
 @Composable
-fun bookView(listdata: ArrayList<Recipe>?, listdata2: ArrayList<Recipe>?){
+fun bookView(listdata: ArrayList<RecipeUser>?, listdata2: ArrayList<RecipeUser>?){
     val context = LocalContext.current
 
 
@@ -163,7 +178,7 @@ fun bookView(listdata: ArrayList<Recipe>?, listdata2: ArrayList<Recipe>?){
                         }
                     ) {
                         Text(
-                            text = listdata.get(it).level + " | " + listdata.get(it).time,
+                            text = listdata.get(it).name + " | " + listdata.get(it).foodType,
                             modifier = Modifier.padding(8.dp)
 
                         )
@@ -210,7 +225,7 @@ fun bookView(listdata: ArrayList<Recipe>?, listdata2: ArrayList<Recipe>?){
                         }
                     ) {
                         Text(
-                            text = listdata2.get(it).level + " | " + listdata2.get(it).time,
+                            text = listdata2.get(it).name + " | " + listdata2.get(it).foodType,
                             modifier = Modifier.padding(8.dp)
 
                         )
