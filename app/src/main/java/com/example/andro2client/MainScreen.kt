@@ -4,15 +4,14 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.andro2client.BottomBarScreen
-import com.example.andro2client.BottomNavGraph
+import com.example.andro2client.BottomBar.BottomBarScreen
+import com.example.andro2client.BottomBar.BottomNavGraph
 
 @ExperimentalFoundationApi
 @Composable

@@ -255,7 +255,7 @@ fun UserScreen(user: User){
                 onClick = {
                     deleteUser(user, context)
                 }) {
-                Text("Delte")
+                Text("Delete")
             }
 
         }

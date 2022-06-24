@@ -1,13 +1,15 @@
-package com.example.andro2client
+package com.example.andro2client.BottomBar
 
 
-import android.content.Intent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.andro2client.AddRecipeView
+import com.example.andro2client.BookScreenView
+import com.example.andro2client.HomeScreenView
+import com.example.andro2client.ProfileView
 
 @ExperimentalFoundationApi
 @Composable

@@ -1,4 +1,4 @@
-package com.example.andro2client
+package com.example.andro2client.LocalDB
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase

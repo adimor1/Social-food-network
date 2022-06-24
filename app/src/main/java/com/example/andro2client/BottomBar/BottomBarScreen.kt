@@ -1,4 +1,4 @@
-package com.example.andro2client
+package com.example.andro2client.BottomBar
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*

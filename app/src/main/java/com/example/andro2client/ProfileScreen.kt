@@ -30,10 +30,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
+import com.example.andro2client.LocalDB.DBManager
 import com.example.andro2client.model.LoginUser
-import com.example.andro2client.model.Recipe
 import com.example.andro2client.model.User
-import com.example.myapplication.delete
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.json.JSONObject
