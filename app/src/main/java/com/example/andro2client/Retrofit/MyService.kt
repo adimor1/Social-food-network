@@ -83,4 +83,8 @@ interface MyService {
 
     @GET ("getUsers")
     fun getUsers():Observable<String>
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "deleteUser", hasBody = true)
+    fun deleteUser(@Field("id") id: String):Observable<String>
 }

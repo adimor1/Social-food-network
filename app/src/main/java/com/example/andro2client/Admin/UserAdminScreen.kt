@@ -1,23 +1,18 @@
-package com.example.andro2client
-
-import com.example.andro2client.model.User
+package com.example.andro2client.Admin
 
 import android.content.Context
+import com.example.andro2client.model.User
+
 import android.content.Intent
-import android.text.TextUtils
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,13 +24,8 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
@@ -43,9 +33,6 @@ import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import com.example.andro2client.*
 import com.example.andro2client.R
-import com.example.andro2client.compositeDisposable
-import com.example.andro2client.model.LoginUser
-import com.example.andro2client.model.Recipe
 import com.example.andro2client.model.RecipeUser
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -266,15 +253,23 @@ fun UserScreen(user: User){
             Button(
                 modifier = Modifier.padding(top = 16.dp),
                 onClick = {
-                    deleteDBM(context)
-                    context.startActivity(Intent(context, MainActivity::class.java))
-
+                    deleteUser(user, context)
                 }) {
-                Text("logout")
+                Text("Delte")
             }
+
         }
 
 
     }
 }
 
+fun deleteUser(user: User, context: Context) {
+    compositeDisposable.add(myService.deleteUser(user.id)
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe { result ->
+            context.startActivity(Intent(context, UserAdminActivity::class.java))
+        }
+    )
+}

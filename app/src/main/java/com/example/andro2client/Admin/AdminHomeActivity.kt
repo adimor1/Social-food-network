@@ -1,4 +1,4 @@
-package com.example.andro2client
+package com.example.andro2client.Admin
 
 
 
@@ -14,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.andro2client.MainActivity
+import com.example.andro2client.deleteDBM
 import com.example.andro2client.ui.theme.Andro2ClientTheme
 
 

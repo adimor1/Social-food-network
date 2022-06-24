@@ -38,16 +38,16 @@
             android:name=".RecipeActivity"
             android:exported="false" />
         <activity
-            android:name=".AdminHomeActivity"
+            android:name=".Admin.AdminHomeActivity"
             android:exported="false" />
         <activity
-            android:name=".RecipeAdminActivity"
+            android:name=".Admin.RecipeAdminActivity"
             android:exported="false" />
         <activity
-            android:name=".UserAdminActivity"
+            android:name=".Admin.UserAdminActivity"
             android:exported="false" />
         <activity
-            android:name=".ProfileAdminActivity"
+            android:name=".Admin.ProfileAdminActivity"
             android:exported="false" />
         <provider
             android:name="androidx.core.content.FileProvider"

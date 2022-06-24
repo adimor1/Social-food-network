@@ -1,4 +1,4 @@
-package com.example.andro2client
+package com.example.andro2client.Admin
 
 import android.content.Intent
 import android.os.Bundle
@@ -11,17 +11,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Favorite
-import androidx.compose.material.icons.rounded.LibraryBooks
-import androidx.compose.material.icons.rounded.TrendingUp
-import androidx.compose.material.icons.rounded.Update
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -29,23 +23,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
-import com.example.andro2client.model.RecipeUser
+import com.example.andro2client.R
+import com.example.andro2client.compositeDisposable
+import com.example.andro2client.model.User
+import com.example.andro2client.myService
 import com.example.andro2client.ui.theme.Andro2ClientTheme
-import com.example.andro2client.ui.theme.MainScreen
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import org.json.JSONArray
 import org.json.JSONObject
 
 
-class RecipeAdminActivity: ComponentActivity() {
+class UserAdminActivity: ComponentActivity() {
 
     @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             Andro2ClientTheme {
-                RecipeView(RecipeList())
+                UserView(UserList())
 
             }
         }
@@ -53,13 +49,14 @@ class RecipeAdminActivity: ComponentActivity() {
 }
 
 @Composable
-private fun RecipeList(): ArrayList<RecipeUser>? {
-    val mylistdata = ArrayList<RecipeUser>()
+private fun UserList(): ArrayList<User>? {
+    val mylistdata = ArrayList<User>()
     val mylistdatastate = remember {
-        mutableStateOf<ArrayList<RecipeUser>?>(null)
+        mutableStateOf<ArrayList<User>?>(null)
     }
 
-    compositeDisposable.add(myService.getrecipeuser()
+    compositeDisposable.add(
+        myService.getUsers()
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->
@@ -68,23 +65,17 @@ private fun RecipeList(): ArrayList<RecipeUser>? {
 
             for (i in 0 until answer.length()) {
                 val json_objectdetail: JSONObject =answer.getJSONObject(i)
-                val userrecipe: JSONArray = json_objectdetail.getJSONArray("userrecipe")
-                val bluev: JSONObject =userrecipe.getJSONObject(0)
-                val model:RecipeUser= RecipeUser(
+                val model:User= User(
                     json_objectdetail.getString("_id"),
-                    json_objectdetail.getString("time"),
-                    json_objectdetail.getString("level"),
-                    json_objectdetail.getString("type"),
-                    json_objectdetail.getString("foodType"),
-                    json_objectdetail.getString("creatorEmail"),
-                    json_objectdetail.getString("imageRec"),
+                    json_objectdetail.getString("email"),
                     json_objectdetail.getString("name"),
-                    json_objectdetail.getString("ingredients"),
-                    json_objectdetail.getString("instruction"),
-                    json_objectdetail.getString("sponsored"),
-                    bluev.getString("isBlueV")
+                    json_objectdetail.getString("favorite"),
+                    json_objectdetail.getString("birth"),
+                    json_objectdetail.getString("type"),
+                    json_objectdetail.getString("gender"),
+                    json_objectdetail.getString("isBlueV"),
                 );
-                    mylistdata.add(model)
+                mylistdata.add(model)
             }
 
             mylistdatastate.value = mylistdata
@@ -96,13 +87,15 @@ private fun RecipeList(): ArrayList<RecipeUser>? {
 
 @ExperimentalFoundationApi
 @Composable
-fun RecipeView(mylistdata: ArrayList<RecipeUser>?){
+fun UserView(mylistdata: ArrayList<User>?){
     val context = LocalContext.current
 
     if(mylistdata!=null){
 
+        Spacer(modifier = Modifier.width(20.dp))
         LazyColumn {
             items(mylistdata.size) {
+
                 Card(
                     modifier = Modifier
                         .padding(10.dp)
@@ -116,12 +109,12 @@ fun RecipeView(mylistdata: ArrayList<RecipeUser>?){
                 {
                     Row(
                         Modifier.clickable {
-                            val intent = Intent(context, RecipeActivity::class.java)
-                            intent.putExtra("RECIPE_ID", mylistdata.get(it))
+                            val intent = Intent(context, ProfileAdminActivity::class.java)
+                            intent.putExtra("USER_ID", mylistdata.get(it))
                             context.startActivity(intent)
                         }
                     ) {
-                        ImageLoader(mylistdata.get(it).imageRec)
+
                         Spacer(modifier = Modifier.width(1.dp))
                         Column(
                             modifier = Modifier
@@ -137,27 +130,9 @@ fun RecipeView(mylistdata: ArrayList<RecipeUser>?){
                             )
                             Spacer(modifier = Modifier.padding(2.dp))
 
-                            Row() {
-                                Icon(
-                                    Icons.Rounded.Update,
-                                    contentDescription = "",
-                                    tint = Color.Black
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(text = mylistdata.get(it).time + "   | ")
-                                Spacer(modifier = Modifier.width(3.dp))
-                                Icon(
-                                    Icons.Rounded.TrendingUp,
-                                    contentDescription = "",
-                                    tint = Color.Black
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(text = mylistdata.get(it).level)
-                            }
 
-                            Spacer(modifier = Modifier.padding(2.dp))
                             Row() {
-                                if (mylistdata.get(it).isBlueV == "true") {
+                                if(mylistdata.get(it).isBlueV =="true") {
                                     Box(
                                         modifier = Modifier
                                             .height(25.dp)
@@ -184,7 +159,7 @@ fun RecipeView(mylistdata: ArrayList<RecipeUser>?){
                                         }
                                     }
                                 }
-                                Text(text = "By " + mylistdata.get(it).creatorMail)
+                                Text(text = "By "+ mylistdata.get(it).email)
                             }
 
                         }
