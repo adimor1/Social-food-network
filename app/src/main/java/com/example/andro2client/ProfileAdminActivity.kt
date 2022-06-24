@@ -24,7 +24,7 @@ class ProfileAdminActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent{
             Andro2ClientTheme {
-
+                UserScreen(user = user)
             }
         }
     }
