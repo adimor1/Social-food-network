@@ -165,6 +165,10 @@ fun RecipeScreen(recipe: RecipeUser){
                                         }
                                     }
                                 }
+
+                                Text(
+                                    text = "By " + recipe.creatorMail
+                                )
                             }
                         }else{
 
@@ -284,9 +288,7 @@ fun RecipeScreen(recipe: RecipeUser){
                                 }
                             }
                         }
-                            Text(
-                                text = "By " + recipe.creatorMail
-                            )
+
                         Text(
                             text = spon
                         )

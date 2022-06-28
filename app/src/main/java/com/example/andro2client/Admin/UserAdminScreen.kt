@@ -343,7 +343,7 @@ fun editUserByAdmin(user: User, context:Context, name:String, birth:String, favo
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->
-            context.startActivity(Intent(context, UserAdminActivity::class.java))
+            context.startActivity(Intent(context, AdminHomeActivity::class.java))
         }
     )
 }
