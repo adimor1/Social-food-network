@@ -333,8 +333,10 @@ fun register(email: String, name:String, password: String,  birth: String, favor
             Toast.makeText(context, ""+result, Toast.LENGTH_SHORT).show()
 
             if(result=="\"Registartion success\""){
-                context.startActivity(Intent(context, HomeActivity::class.java))
+
                 LoginUser.loginEmail = email
+                LoginUser.isAdmin = "false"
+                context.startActivity(Intent(context, HomeActivity::class.java))
 
             }
         }

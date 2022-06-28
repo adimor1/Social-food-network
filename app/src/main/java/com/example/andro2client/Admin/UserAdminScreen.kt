@@ -324,7 +324,7 @@ fun deleteUser(user: User, context: Context) {
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .subscribe { result ->
-            context.startActivity(Intent(context, UserAdminActivity::class.java))
+            context.startActivity(Intent(context, AdminHomeActivity::class.java))
         }
     )
 }
